@@ -1,4 +1,7 @@
 ## Images
+android/assets/mainMenu/
+android/assets/loading/
+android/assets/game/
 
 ## Java
 
@@ -64,3 +67,6 @@ build/
 
 ## OS Specific
 .DS_Store
+
+*.log
+*.png~

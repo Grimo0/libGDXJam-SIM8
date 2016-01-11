@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import fr.langladure.sim8.SIM8;
 
 /**
@@ -52,11 +53,12 @@ public class OptionScreen extends AbstractScreen {
 
 		TextureAtlas atlas = game.assetManager.get("mainMenu/mainMenuPack.atlas", TextureAtlas.class);
 
-		/// Create the screen background and adapt the world to it
-		Image screenBg = new Image(atlas.findRegion("mainMenuBg"));
+		// Create the screen background and adapt the world to it
+		Image screenBg = new Image(new TiledDrawable(atlas.findRegion("metal_panel")));
 
-		float ratio = SCREEN_WIDTH / screenBg.getWidth();
-		screenBg.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		float ratio = SCREEN_WIDTH / (4f * screenBg.getWidth());
+		screenBg.setY(-screenBg.getHeight() / 2f);
+		screenBg.setSize(SCREEN_WIDTH, SCREEN_HEIGHT + screenBg.getHeight() / 2f);
 
 		stage.addActor(screenBg);
 
@@ -70,7 +72,7 @@ public class OptionScreen extends AbstractScreen {
 		fontParams.shadowColor = new Color(0f, 0f, 0f, 0.3f);
 		fontParams.shadowOffsetX = 3;
 		fontParams.shadowOffsetY = 3;
-		BitmapFont font = SIM8.titleGen.generateFont(fontParams);
+		BitmapFont font = SIM8.title2Gen.generateFont(fontParams);
 
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 		textButtonStyle.font = font;
@@ -91,9 +93,6 @@ public class OptionScreen extends AbstractScreen {
 
 		optionsTable = new Table(skin);
 		optionsTable.defaults().left().spaceBottom(Value.percentHeight(0.15f));
-
-		optionsCell = table.add(optionsTable);
-		optionsCell.row();
 
 		TextButton soundButton = new TextButton("Son : oui", skin);
 		soundButton.addListener(new ChangeListener() {
@@ -117,6 +116,15 @@ public class OptionScreen extends AbstractScreen {
 		});
 		optionsTable.add(graphicButton).row();
 
+		TextButton backButton = new TextButton("Retour", skin);
+		backButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.setScreen(game.mainMenuScreen);
+			}
+		});
+		optionsTable.add(backButton).row();
+
 
 		graphicTable = new Table(skin);
 		graphicTable.defaults().left().spaceBottom(Value.percentHeight(0.15f));
@@ -125,7 +133,7 @@ public class OptionScreen extends AbstractScreen {
 		lowResolution.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				Gdx.graphics.setDisplayMode(800, 600, false);
+				Gdx.graphics.setWindowedMode(800, 600);
 			}
 		});
 		graphicTable.add(lowResolution).row();
@@ -134,27 +142,23 @@ public class OptionScreen extends AbstractScreen {
 		highResolution.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				Gdx.graphics.setDisplayMode(1280, 768, false);
+				Gdx.graphics.setWindowedMode(1280, 768);
 			}
 		});
 		graphicTable.add(highResolution).row();
 
-
-		final TextButton backButton = new TextButton("Retour", skin);
+		backButton = new TextButton("Retour", skin);
 		backButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if (optionsCell.getActor() == graphicTable)
-					optionsCell.setActor(optionsTable);
-				else {
-					optionsCell.setActor(optionsTable);
-					game.setScreen(game.mainMenuScreen);
-				}
+				optionsCell.setActor(optionsTable);
 			}
 		});
-		optionsTable.add(backButton).row();
 		graphicTable.add(backButton).row();
 
+
+		optionsCell = table.add(optionsTable);
+		optionsCell.row();
 		table.layout();
 
 		// Cursor
@@ -182,21 +186,8 @@ public class OptionScreen extends AbstractScreen {
 					stage.setKeyboardFocus(item);
 
 					return true;
-				}else if (keycode == Input.Keys.DOWN && selected == cellTable.getChildren().size - 1) {
-					cellTable.getChildren().items[selected].setColor(Color.WHITE);
-
-					selected++;
-					Actor item = backButton;
-					item.setColor(Color.BLACK);
-					cursor.setY(table.getY() + item.getY() + (item.getHeight() - cursor.getHeight()) / 2);
-					stage.setKeyboardFocus(item);
-
-					return true;
 				} else if (keycode == Input.Keys.UP && selected > 0) {
-					if (selected == cellTable.getChildren().size)
-						backButton.setColor(Color.WHITE);
-					else
-						cellTable.getChildren().items[selected].setColor(Color.WHITE);
+					cellTable.getChildren().items[selected].setColor(Color.WHITE);
 
 					selected--;
 					Actor item = cellTable.getChildren().items[selected];

@@ -10,7 +10,7 @@ public class DesktopLauncher {
 
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = SIM8.NAME + " " + SIM8.VERSION;
-		cfg.height = 768;
+		cfg.height = 720;
 		cfg.width = 1280;
 		cfg.resizable = false;
 

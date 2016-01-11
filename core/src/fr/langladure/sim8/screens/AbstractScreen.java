@@ -31,16 +31,8 @@ public abstract class AbstractScreen implements Screen {
 	public AbstractScreen(final SIM8 game) {
 		this.game = game;
 
-		SCREEN_WIDTH = 256f;
-		SCREEN_HEIGHT = 192f;
-
-		if (SCREEN_WIDTH / SCREEN_HEIGHT > (float) Gdx.graphics.getWidth() / Gdx.graphics.getHeight()) {
-			SCREEN_WIDTH = Gdx.graphics.getHeight();
-			SCREEN_HEIGHT = Gdx.graphics.getHeight() * SCREEN_WIDTH / SCREEN_HEIGHT;
-		} else {
-			SCREEN_HEIGHT = Gdx.graphics.getWidth() * SCREEN_HEIGHT / SCREEN_WIDTH;
-			SCREEN_WIDTH = Gdx.graphics.getWidth();
-		}
+		SCREEN_WIDTH = 1920f;//256f;
+		SCREEN_HEIGHT = 1080f;//192f;
 
 		camera = new OrthographicCamera();
 		viewport = new FillViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);

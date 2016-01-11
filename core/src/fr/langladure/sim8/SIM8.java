@@ -22,15 +22,16 @@ import fr.langladure.sim8.screens.*;
 public class SIM8 extends Game {
 
 	public static final String NAME = "SIM8";
-	public static final String VERSION = "0.1.0";
+	public static final String VERSION = "0.2.0";
 	public static boolean RELEASE = false;
 	public static boolean DEVMODE = false;
 
 	public static Logger logger;
 
 	public static StringBuilder stringBuilder;
-	public static FreeTypeFontGenerator title2Gen;
 	public static FreeTypeFontGenerator titleGen;
+	public static FreeTypeFontGenerator title2Gen;
+	public static FreeTypeFontGenerator casualGen;
 
 	public static FileHandleResolver resolver;
 	public AssetsFinder assetsFinder;
@@ -50,7 +51,7 @@ public class SIM8 extends Game {
 			FileHandle[] assetsFolder = Gdx.files.internal("../../_assets").list();
 			for (FileHandle folder : assetsFolder) {
 				if (folder.isDirectory() && !folder.name().startsWith("_")) {
-//					TexturePacker.process("../../_assets/" + folder.name(), folder.name(), folder.name() + "Pack");
+					TexturePacker.process("../../_assets/" + folder.name(), folder.name(), folder.name() + "Pack");
 				}
 			}
 		}
@@ -77,15 +78,16 @@ public class SIM8 extends Game {
 		assetsFinder.load(".");
 		assetManager.finishLoading();
 
-		titleGen = assetManager.get("./freetype/Radley.ttf", FreeTypeFontGenerator.class);
-		title2Gen = titleGen;
+		titleGen = assetManager.get("./freetype/SourceCodePro-ExtraLight.ttf", FreeTypeFontGenerator.class);
+		title2Gen = assetManager.get("./freetype/kenvector_future_thin.ttf", FreeTypeFontGenerator.class);
+		casualGen = assetManager.get("./freetype/YanoneKaffeesatz-Light.ttf", FreeTypeFontGenerator.class);
 
 		mainMenuScreen = new MainMenuScreen(this);
 		optionScreen = new OptionScreen(this);
 		loadingScreen = new LoadingScreen(this);
 		gameScreen = new GameScreen(this);
 
-		loadingScreen.setNextScreen(mainMenuScreen);
+		loadingScreen.setNextScreen(gameScreen);
 		setScreen(loadingScreen);
 	}
 

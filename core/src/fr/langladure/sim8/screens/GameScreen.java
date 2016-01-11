@@ -1,10 +1,13 @@
 package fr.langladure.sim8.screens;
 
-import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import fr.langladure.sim8.rooms.*;
 import fr.langladure.sim8.SIM8;
 
 
@@ -13,9 +16,16 @@ import fr.langladure.sim8.SIM8;
  */
 public class GameScreen extends AbstractScreen {
 
-	private PooledEngine engine;
+	private Stage stage;
 
 	private Sprite background;
+
+	private PilotRoom pilotRoom;
+	private ControlRoom controlRoom;
+	private RestRoom restRoom;
+	private Hull hull;
+	private StoreRoom storeRoom;
+	private float ratio;
 
 
 	public GameScreen(SIM8 game) {
@@ -31,26 +41,44 @@ public class GameScreen extends AbstractScreen {
 
 	@Override
 	public void create() {
+		stage = new Stage(viewport, game.batch);
+
 		TextureAtlas atlas = game.assetManager.get("game/gamePack.atlas", TextureAtlas.class);
 
-		background = atlas.createSprite("bg");
+		background = atlas.createSprite("metal_panel");
 
-		float ratio = SCREEN_WIDTH / background.getWidth();
-		background.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		ratio = SCREEN_WIDTH / (4f * background.getWidth());
+		background.setSize(background.getWidth() * ratio, background.getHeight() * ratio);
 
-		/*float worldWidth = 1;
-		viewport.setWorldSize(worldWidth, worldWidth * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
-		updateViewPort(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());*/
+		pilotRoom = new PilotRoom();
+		stage.addActor(pilotRoom);
+		pilotRoom.setBackground(new TextureRegionDrawable(atlas.findRegion("PilotRoom")));
+		pilotRoom.setPosition(64f, 76f + 340f + 38f);
+		pilotRoom.setSize(880f, 550f);
 
+		controlRoom = new ControlRoom();
+		stage.addActor(controlRoom);
+		controlRoom.setBackground(new TextureRegionDrawable(atlas.findRegion("ControlRoom")));
+		controlRoom.setPosition(64f + 880f + 32f, 76f + 340f + 38f);
+		controlRoom.setSize(880f, 550f);
 
-		///// Background /////
-		/*background = atlas.createSprite("bg");
-		background.setPosition(0f, 0f);
-		if (Gdx.graphics.getWidth() / background.getWidth() < Gdx.graphics.getHeight() / background.getHeight()) {
-			background.setSize(viewport.getWorldHeight() * background.getWidth() / background.getHeight(), viewport.getWorldHeight());
-		} else {
-			background.setSize(viewport.getWorldWidth(), viewport.getWorldWidth() * background.getHeight() / background.getWidth());
-		}*/
+		restRoom = new RestRoom();
+		stage.addActor(restRoom);
+		restRoom.setBackground(new TextureRegionDrawable(atlas.findRegion("RestRoom")));
+		restRoom.setPosition(98f, 76f);
+		restRoom.setSize(542f, 340f);
+
+		hull = new Hull();
+		stage.addActor(hull);
+		hull.setBackground(new TextureRegionDrawable(atlas.findRegion("Hull")));
+		hull.setPosition(98f + 528f + 49f, 76f);
+		hull.setSize(542f, 340f);
+
+		storeRoom = new StoreRoom();
+		stage.addActor(storeRoom);
+		storeRoom.setBackground(new TextureRegionDrawable(atlas.findRegion("StoreRoom")));
+		storeRoom.setPosition(98f + 2f * 49f + 2f * 528f, 76f);
+		storeRoom.setSize(542f, 340f);
 
 	}
 
@@ -62,22 +90,27 @@ public class GameScreen extends AbstractScreen {
 	@Override
 	public void show() {
 		super.show();
-		InputMultiplexer multiplexer = new InputMultiplexer();
+		InputMultiplexer multiplexer = new InputMultiplexer(stage);
 		Gdx.input.setInputProcessor(multiplexer);
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-
-		engine.update(delta);
+		stage.setDebugAll(SIM8.DEVMODE);
 
 		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
-//		background.setPosition(camera.position.x - background.getWidth() / 2f, camera.position.y - background.getHeight() / 2f);
-		background.draw(game.batch);
+		for (float x = 0; x < SCREEN_WIDTH; x += background.getWidth() - 01f * ratio) {
+			for (float y = -background.getHeight() / 2f; y < SCREEN_HEIGHT; y += background.getHeight() - 01f * ratio) {
+				background.setPosition(x, y);
+				background.draw(game.batch);
+			}
+		}
 		game.batch.end();
 
+		stage.act(delta);
+		stage.draw();
 	}
 
 	@Override
