@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/GdxTheme" >
         <activity
-            android:name="fr.langladure.sim8.android.AndroidLauncher"
+            android:name="fr.radnap.sim8.android.AndroidLauncher"
             android:label="@string/app_name" 
             android:screenOrientation="sensorLandscape"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
