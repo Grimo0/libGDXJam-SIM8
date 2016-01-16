@@ -17,7 +17,7 @@ public class StoreRoom extends Room {
 	public StoreRoom(TextureAtlas atlas, float width, float height) {
 		super("StoreRoom", atlas, width, height);
 
-		resources = 75;
+		resources = 85;
 
 		addActionButton("harvest", new ChangeListener() {
 			@Override
@@ -32,8 +32,14 @@ public class StoreRoom extends Room {
 
 
 	@Override
-	public void takeDamage(float damage) {
+	public void initialize() {
 
+	}
+
+	@Override
+	public void act(float delta) {
+		super.act(delta);
+		resourcesLabel.setText(String.valueOf(resources) + "r");
 	}
 
 	public int getResources() {
@@ -48,11 +54,5 @@ public class StoreRoom extends Room {
 		amount = resources;
 		resources = 0;
 		return amount;
-	}
-
-	@Override
-	public void act(float delta) {
-		super.act(delta);
-		resourcesLabel.setText(String.valueOf(resources) + "r");
 	}
 }

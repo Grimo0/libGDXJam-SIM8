@@ -20,7 +20,7 @@ import fr.radnap.sim8.screens.*;
 public class SIM8 extends Game {
 
 	public static final String NAME = "SIM8";
-	public static final String VERSION = "0.3.0";
+	public static final String VERSION = "0.4.0";
 	public static boolean RELEASE = false;
 	public static boolean DEVMODE = false;
 
@@ -50,7 +50,7 @@ public class SIM8 extends Game {
 			FileHandle[] assetsFolder = Gdx.files.internal("../../_assets").list();
 			for (FileHandle folder : assetsFolder) {
 				if (folder.isDirectory() && !folder.name().startsWith("_")) {
-					TexturePacker.process("../../_assets/" + folder.name(), folder.name(), folder.name() + "Pack");
+//					TexturePacker.process("../../_assets/" + folder.name(), folder.name(), folder.name() + "Pack");
 				}
 			}
 		}

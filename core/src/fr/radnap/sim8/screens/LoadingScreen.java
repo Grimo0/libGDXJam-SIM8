@@ -74,7 +74,7 @@ public class LoadingScreen extends AbstractScreen {
 		fontParams.shadowOffsetY = 2;
 		BitmapFont font = SIM8.title2Gen.generateFont(fontParams);
 
-		pass = new Label("Loading...", new Label.LabelStyle(font, new Color(0.9f, 0.9f, 0.85f, 1f)));
+		pass = new Label("Clic to start", new Label.LabelStyle(font, new Color(0.9f, 0.9f, 0.85f, 1f)));
 		stage.addActor(pass);
 		pass.setX((stage.getWidth() - pass.getWidth()) / 2f);
 		pass.setY(loadingBar.getY() + 1f * loadingBar.getHeight());

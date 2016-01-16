@@ -20,8 +20,9 @@ public class RestRoom extends Room {
 		});
 	}
 
+
 	@Override
-	public void takeDamage(float damage) {
+	public void initialize() {
 
 	}
 }

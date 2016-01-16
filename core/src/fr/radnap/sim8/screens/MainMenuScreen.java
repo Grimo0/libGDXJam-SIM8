@@ -134,8 +134,10 @@ public class MainMenuScreen extends AbstractScreen {
 		credits.setX((SCREEN_WIDTH - credits.getWidth()) / 2f);
 		credits.setY(0.14f * SCREEN_HEIGHT - credits.getHeight() / 2f);
 
-		Label credits2 = new Label("with icons made by Freepik from www.flaticon.com" +
-				"\nand arts by Skorpio and Unnamed (Viktor.Hahn@web.de)\nfrom opengameart.org", skin, "credits2");
+		Label credits2 = new Label("with icons made by Freepik from www.flaticon.com," +
+				"\nsome arts by Skorpio from opengameart.org," +
+				"\nspaceships by MillionthVector (http://millionthvector.blogspot.de)" +
+				"\nand planets made by Unnamed (Viktor.Hahn@web.de)", skin, "credits2");
 		stage.addActor(credits2);
 		credits2.setAlignment(Align.center);
 		credits2.setX((SCREEN_WIDTH - credits2.getWidth()) / 2f);
@@ -155,7 +157,7 @@ public class MainMenuScreen extends AbstractScreen {
 		newGame.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				game.loadingScreen.setFadeWhenLoaded(false);
+				game.loadingScreen.setFadeWhenLoaded(true);
 				game.loadingScreen.setNextScreen(game.gameScreen);
 				game.setScreen(game.loadingScreen);
 			}
@@ -186,7 +188,7 @@ public class MainMenuScreen extends AbstractScreen {
 
 		table.layout();
 
-		// Cursor
+		/*// Cursor
 		selected = 0;
 		cursor = new Image(game.assetManager.get("./cursor.png", Texture.class));
 		stage.addActor(cursor);
@@ -225,7 +227,7 @@ public class MainMenuScreen extends AbstractScreen {
 
 				return super.keyDown(event, keycode);
 			}
-		});
+		});*/
 	}
 
 	@Override

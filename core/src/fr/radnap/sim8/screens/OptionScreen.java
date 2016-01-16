@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
+import fr.radnap.sim8.Options;
 import fr.radnap.sim8.SIM8;
 
 /**
@@ -99,7 +100,7 @@ public class OptionScreen extends AbstractScreen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				TextButton soundButton = (TextButton) actor;
-				if (soundButton.getLabel().toString().endsWith("oui"))
+				if (Options.sound)
 					soundButton.setText("Son : non");
 				else
 					soundButton.setText("Son : oui");
@@ -161,7 +162,7 @@ public class OptionScreen extends AbstractScreen {
 		optionsCell.row();
 		table.layout();
 
-		// Cursor
+		/*// Cursor
 		selected = 0;
 		final Image cursor = new Image(game.assetManager.get("./cursor.png", Texture.class));
 		stage.addActor(cursor);
@@ -200,7 +201,7 @@ public class OptionScreen extends AbstractScreen {
 
 				return super.keyDown(event, keycode);
 			}
-		});
+		});*/
 	}
 
 	@Override

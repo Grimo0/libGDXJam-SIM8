@@ -1,9 +1,11 @@
 package fr.radnap.sim8.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -24,6 +26,11 @@ public class GameScreen extends AbstractScreen {
 	private Sprite background;
 	private float ratio;
 	public static Skin skin = null;
+	private PilotRoom pilotRoom;
+	private ControlRoom controlRoom;
+	private StoreRoom storeRoom;
+	private Hull hull;
+	private RestRoom restRoom;
 
 
 	public GameScreen(SIM8 game) {
@@ -73,26 +80,25 @@ public class GameScreen extends AbstractScreen {
 		}
 
 
-		PilotRoom pilotRoom = new PilotRoom(atlas, 880f, 550f);
+		pilotRoom = new PilotRoom(atlas, 880f, 550f);
 		stage.addActor(pilotRoom);
 		pilotRoom.setPosition(64f, 60f + 375f + 30f);
-		pilotRoom.takeDamage(0.8f);
 
-		ControlRoom controlRoom = new ControlRoom(atlas, 880f, 550f);
+		controlRoom = new ControlRoom(atlas, 880f, 550f);
 		stage.addActor(controlRoom);
 		controlRoom.setPosition(64f + 880f + 32f, 60f + 375f + 30f);
 
-		RestRoom restRoom = new RestRoom(atlas, 600f, 375f);
-		stage.addActor(restRoom);
-		restRoom.setPosition(40f, 60f);
+		storeRoom = new StoreRoom(atlas, 600f, 375f);
+		stage.addActor(storeRoom);
+		storeRoom.setPosition(40f, 60f);
 
-		Hull hull = new Hull(atlas, 600f, 375f);
+		hull = new Hull(atlas, 600f, 375f);
 		stage.addActor(hull);
 		hull.setPosition(40f + 600f + 24f, 60f);
 
-		StoreRoom storeRoom = new StoreRoom(atlas, 600f, 375f);
-		stage.addActor(storeRoom);
-		storeRoom.setPosition(40f + 2f * 24f + 2f * 600f, 60f);
+		restRoom = new RestRoom(atlas, 600f, 375f);
+		stage.addActor(restRoom);
+		restRoom.setPosition(40f + 2f * 24f + 2f * 600f, 60f);
 	}
 
 	@Override
@@ -103,8 +109,14 @@ public class GameScreen extends AbstractScreen {
 	@Override
 	public void show() {
 		super.show();
-		InputMultiplexer multiplexer = new InputMultiplexer(stage);
-		Gdx.input.setInputProcessor(multiplexer);
+		Gdx.input.setInputProcessor(stage);
+
+		pilotRoom.initialize();
+		controlRoom.initialize();
+		controlRoom.takeDamage(0.8f);
+		storeRoom.initialize();
+		hull.initialize();
+		restRoom.initialize();
 	}
 
 	@Override
