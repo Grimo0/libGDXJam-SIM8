@@ -24,9 +24,6 @@ public class EnemyShip extends Group implements Ship {
 	private float stateTime;
 	private Image ship;
 
-	private float attackOriginX;
-	private float attackOriginY;
-
 	private Image laser1;
 	private Image laser2;
 	private Image laser3;
@@ -38,9 +35,9 @@ public class EnemyShip extends Group implements Ship {
 		this.playerShip = playerShip;
 		this.star = null;
 		this.enemyType = enemyType;
-		life = 20 + ((enemyType - 1) % 4 + 1) * 5;
-		damages = 1 + ((enemyType - 1) % 4 + 1) / 2;
-		fireRate = .5f * ((enemyType - 1) % 4) + 1.5f;
+		life = 20 + ((enemyType - 1) % 4) * 5;
+		damages = 2 + ((enemyType - 1) % 4) / 2;
+		fireRate = .3f * ((enemyType - 1) % 4 + 1) + 1f;
 		stateTime = 0f;
 
 		ship = new Image(atlas.findRegion("enemy", enemyType));
@@ -50,12 +47,15 @@ public class EnemyShip extends Group implements Ship {
 
 		laser1 = new Image(atlas.findRegion("laser"));
 		laser1.setVisible(false);
+		laser1.setOrigin(laser1.getWidth() / 2f, laser1.getHeight() / 2f);
 		addActorAfter(ship, laser1);
 		laser2 = new Image(atlas.findRegion("laser"));
 		laser2.setVisible(false);
+		laser2.setOrigin(laser2.getWidth() / 2f, laser2.getHeight() / 2f);
 		addActorAfter(ship, laser2);
 		laser3 = new Image(atlas.findRegion("laser"));
 		laser3.setVisible(false);
+		laser3.setOrigin(laser3.getWidth() / 2f, laser3.getHeight() / 2f);
 		addActorAfter(ship, laser3);
 
 		laserSound = assetManager.get("./sounds/laser2.mp3", Sound.class);
@@ -90,9 +90,7 @@ public class EnemyShip extends Group implements Ship {
 	}
 
 	private void fire() {
-		playerShip.takeDamages(damages);
-		attackOriginX = ship.getX();
-		attackOriginY = ship.getY() + getHeight() / 2f;
+		if (playerShip.isGameOver()) return;
 
 		fireLaser(laser1);
 		ship.addAction(sequence(
@@ -116,11 +114,15 @@ public class EnemyShip extends Group implements Ship {
 	private void fireLaser(final Image laser) {
 		if (Options.sound)
 			laserSound.play(.01f);
-		laser.setPosition(attackOriginX, attackOriginY);
+
+		float attackOriginX = ship.getX();
+		float attackOriginY = ship.getY() + ship.getHeight() / 2f;
+
+		laser.setPosition(attackOriginX - laser.getWidth() / 2f, attackOriginY - laser.getHeight() / 2f);
 		laser.setVisible(true);
 		final Actor enemy = getParent().findActor("PlayerShipHull");
 		float x = (float) (enemy.getX() + enemy.getWidth() * .75f + Math.random() * enemy.getWidth() * .25f - getX());
-		float y = (float) (enemy.getY() + enemy.getHeight() * .25f + Math.random() * enemy.getHeight() * .5f - getY());
+		float y = (float) (ship.getY() + ship.getHeight() * .3f + Math.random() * ship.getHeight() * .4f);
 		double distance = SIM8.distance(attackOriginX, attackOriginY, x, y);
 		if (y > attackOriginY)
 			laser.setRotation(90f + (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
@@ -131,7 +133,7 @@ public class EnemyShip extends Group implements Ship {
 				Actions.run(new Runnable() {
 					@Override
 					public void run() {
-						playerShip.takeDamages(playerShip.getLaserDamages());
+						playerShip.takeDamages(getLaserDamages());
 						laser.setVisible(false);
 						if (Options.sound)
 							laserTouchedSound.play(.02f);

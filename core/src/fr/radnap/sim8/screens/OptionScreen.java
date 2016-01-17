@@ -108,7 +108,7 @@ public class OptionScreen extends AbstractScreen {
 		});
 		optionsTable.add(soundButton).row();
 
-		TextButton graphicButton = new TextButton("Résolution", skin);
+		TextButton graphicButton = new TextButton("Resolution", skin);
 		graphicButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -148,7 +148,7 @@ public class OptionScreen extends AbstractScreen {
 		});
 		graphicTable.add(highResolution).row();
 
-		backButton = new TextButton("Retour", skin);
+		backButton = new TextButton("<", skin);
 		backButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {

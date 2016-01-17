@@ -119,11 +119,7 @@ public class ControlRoom extends RepairableRoom {
 	}
 
 	public void leavePlanet() {
-		disable("laser");
 		endFight();
-
-		belowButtons.clearChildren();
-		belowButtons.add("Starting the reactor, leaving the area.").row();
 	}
 
 	public void encounterEnemy(EnemyShip enemyShip) {
@@ -136,6 +132,7 @@ public class ControlRoom extends RepairableRoom {
 		enable("laser");
 		enable("rockets");
 
+		belowButtons.clearChildren();
 		Cell<Label> add = belowButtons.add("An enemy's ship is attacking us !");
 		add.getActor().setColor(Color.SCARLET);
 		add.row();
@@ -149,5 +146,7 @@ public class ControlRoom extends RepairableRoom {
 		rocketsTime = 0f;
 		rocketsLoading.setDrawable(null);
 		disable("rockets");
+
+		belowButtons.clearChildren();
 	}
 }

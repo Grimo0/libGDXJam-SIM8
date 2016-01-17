@@ -6,9 +6,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import fr.radnap.sim8.PlayerShip;
 import fr.radnap.sim8.SIM8;
 
@@ -24,12 +29,17 @@ public class GameScreen extends AbstractScreen {
 	private float ratio;
 	public static Skin skin = null;
 	private PlayerShip playerShip;
+	private Image overlay;
 
 
 	public GameScreen(SIM8 game) {
 		super(game);
 	}
 
+
+	public Stage getStage() {
+		return stage;
+	}
 
 	@Override
 	public void loadAssets() {
@@ -70,9 +80,20 @@ public class GameScreen extends AbstractScreen {
 			labelStyle.font = SIM8.numberGen.generateFont(fontParams);
 			labelStyle.fontColor = new Color(1f, 1f, 1f, 1f);
 			skin.add("number", labelStyle);
+
+			labelStyle = new Label.LabelStyle();
+			fontParams.size = 150;
+			labelStyle.font = SIM8.numberGen.generateFont(fontParams);
+			labelStyle.fontColor = new Color(1f, 1f, 1f, 1f);
+			skin.add("title", labelStyle);
 		}
 
-		playerShip = new PlayerShip(atlas, game.assetManager, stage);
+		playerShip = new PlayerShip(this, atlas, game.assetManager);
+		overlay = new Image(atlas.findRegion("overlay"));
+		overlay.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		overlay.setTouchable(Touchable.disabled);
+		overlay.setColor(1f, 1f, 1f, 0f);
+		stage.addActor(overlay);
 	}
 
 	@Override
@@ -85,6 +106,50 @@ public class GameScreen extends AbstractScreen {
 		super.show();
 		Gdx.input.setInputProcessor(stage);
 		playerShip.initialize();
+	}
+
+	public void gameOver() {
+		overlay.setTouchable(Touchable.enabled);
+		overlay.addAction(Actions.fadeIn(.3f));
+
+		Label label = new Label("Game Over", skin, "title");
+		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, (SCREEN_HEIGHT + label.getHeight()) / 2f);
+		stage.addActor(label);
+
+		label = new Label("> Back to the menu <", skin);
+		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, SCREEN_HEIGHT / 2f - label.getHeight());
+		label.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				game.loadingScreen.setFadeWhenLoaded(true);
+				game.loadingScreen.setNextScreen(game.mainMenuScreen);
+				game.setScreen(game.loadingScreen);
+			}
+		});
+		stage.addActor(label);
+	}
+
+	public void ending() {
+		overlay.setTouchable(Touchable.enabled);
+		overlay.addAction(Actions.fadeIn(.3f));
+
+		Label label = new Label("Success", skin, "title");
+		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, (SCREEN_HEIGHT + label.getHeight()) / 2f);
+		stage.addActor(label);
+
+		label = new Label("> Back to the menu <", skin);
+		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, SCREEN_HEIGHT / 2f - label.getHeight());
+		label.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				game.loadingScreen.setFadeWhenLoaded(true);
+				game.loadingScreen.setNextScreen(game.mainMenuScreen);
+				game.setScreen(game.loadingScreen);
+			}
+		});
+		stage.addActor(label);
 	}
 
 	@Override

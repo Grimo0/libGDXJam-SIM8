@@ -4,9 +4,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,6 +22,7 @@ import fr.radnap.sim8.Star;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.addAction;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
 /**
  * @author Radnap
@@ -49,7 +52,9 @@ public class PilotRoom extends Room {
 		map = new Group();
 		addActorBefore(aboveButtons, map);
 
-		map.addActor(new Image(atlas.findRegion("nebula")));
+		Image nebula = new Image(atlas.findRegion("nebula"));
+		map.addActor(nebula);
+		map.setSize(nebula.getPrefWidth(), nebula.getPrefHeight());
 
 		starDrawable = new TextureRegionDrawable(atlas.findRegion("star"));
 		starVisitedDrawable = new TextureRegionDrawable(atlas.findRegion("starVisited"));
@@ -68,6 +73,7 @@ public class PilotRoom extends Room {
 
 		reachable = new Image(atlas.findRegion("reachable"));
 		reachable.setOrigin(reachable.getWidth() / 2f, reachable.getHeight() / 2f);
+		reachable.setSize(reachable.getWidth() * .9f, reachable.getHeight() * .9f);
 		map.addActor(reachable);
 
 		generateStars(assetManager);
@@ -197,6 +203,10 @@ public class PilotRoom extends Room {
 				})));
 		reachable.addAction(moveTo(star.getX() + (star.getWidth() - reachable.getWidth()) / 2f,
 				star.getY() + (star.getHeight() - reachable.getHeight()) / 2f, duration));
+		map.addAction(moveTo(
+				MathUtils.clamp(map.getX() + (currentStar.getX() - star.getX()) * .5f, getWidth() - map.getWidth(), 0),
+				MathUtils.clamp(map.getY() + (currentStar.getY() - star.getY()) * .5f, getHeight() - map.getHeight(), 0),
+				duration));
 
 		((Hull) rooms.get("Hull")).travel();
 		((ControlRoom) rooms.get("ControlRoom")).leavePlanet();

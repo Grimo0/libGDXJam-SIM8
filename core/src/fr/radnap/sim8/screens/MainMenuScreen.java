@@ -90,8 +90,8 @@ public class MainMenuScreen extends AbstractScreen {
 		fontParams.minFilter = Texture.TextureFilter.Linear;
 		fontParams.magFilter = Texture.TextureFilter.Linear;
 		fontParams.shadowColor = new Color(0f, 0f, 0f, 0.3f);
-		fontParams.shadowOffsetX = 2;
-		fontParams.shadowOffsetY = 2;
+		fontParams.shadowOffsetX = 3;
+		fontParams.shadowOffsetY = 3;
 
 		Label.LabelStyle labelStyle = new Label.LabelStyle();
 		fontParams.size = (int) (0.2f * SCREEN_HEIGHT);
@@ -99,27 +99,27 @@ public class MainMenuScreen extends AbstractScreen {
 		labelStyle.fontColor = new Color(1f, 42f / 255f, 0f, 1f);
 		skin.add("title", labelStyle);
 
+		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+		fontParams.size = 100;
+		fontParams.shadowColor = new Color(.1f, 0f, 0f, 0.4f);
+		textButtonStyle.font = SIM8.title2Gen.generateFont(fontParams);
+		textButtonStyle.overFontColor = Color.WHITE;
+		textButtonStyle.fontColor = Color.LIGHT_GRAY;
+		skin.add("default", textButtonStyle);
+
 		labelStyle = new Label.LabelStyle();
 		fontParams.size = 30;
 		fontParams.shadowOffsetX = 1;
 		fontParams.shadowOffsetY = 1;
 		labelStyle.font = SIM8.commonGen.generateFont(fontParams);
-		labelStyle.fontColor = Color.BLACK;
+		labelStyle.fontColor = Color.LIGHT_GRAY;
 		skin.add("credits", labelStyle);
 
 		labelStyle = new Label.LabelStyle();
 		fontParams.size = 22;
 		labelStyle.font = SIM8.commonGen.generateFont(fontParams);
-		labelStyle.fontColor = Color.BLACK;
+		labelStyle.fontColor = Color.LIGHT_GRAY;
 		skin.add("credits2", labelStyle);
-
-		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-		fontParams.size = (int) (0.095f * SCREEN_HEIGHT);
-		fontParams.shadowColor = new Color(29f / 255f, 46f / 255f, 66f / 255f, 1f);
-		textButtonStyle.font = SIM8.title2Gen.generateFont(fontParams);
-		textButtonStyle.overFontColor = Color.BLACK;
-		textButtonStyle.fontColor = new Color(0.14f, 0.14f, 0.18f, 1f);
-		skin.add("default", textButtonStyle);
 
 
 		Label title = new Label(SIM8.NAME, skin, "title");
@@ -149,7 +149,7 @@ public class MainMenuScreen extends AbstractScreen {
 		stage.addActor(table);
 		table.left().bottom();
 		// Setting the default value of the cells
-		table.defaults().left().spaceTop(Value.percentHeight(0.3f));
+		table.defaults().left().spaceTop(Value.percentHeight(0.8f));
 		table.setX(0.15f * SCREEN_WIDTH);
 		table.setY(0.3f * SCREEN_HEIGHT);
 
@@ -186,7 +186,7 @@ public class MainMenuScreen extends AbstractScreen {
 		exit.addListener(new MenuItemListener());
 		table.add(exit).row();
 
-		table.layout();
+		table.validate();
 
 		/*// Cursor
 		selected = 0;

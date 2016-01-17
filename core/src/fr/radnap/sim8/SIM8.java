@@ -20,7 +20,7 @@ import fr.radnap.sim8.screens.*;
 public class SIM8 extends Game {
 
 	public static final String NAME = "SIM8";
-	public static final String VERSION = "0.5.0";
+	public static final String VERSION = "0.5.1";
 	public static boolean RELEASE = false;
 	public static boolean DEVMODE = false;
 
@@ -77,8 +77,8 @@ public class SIM8 extends Game {
 		assetsFinder.load(".");
 		assetManager.finishLoading();
 
-		titleGen = assetManager.get("./freetype/ProggySquareSZ.ttf", FreeTypeFontGenerator.class);
-		title2Gen = assetManager.get("./freetype/8bitlim.ttf", FreeTypeFontGenerator.class);
+		titleGen = assetManager.get("./freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
+		title2Gen = assetManager.get("./freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
 		commonGen = assetManager.get("./freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
 		numberGen = assetManager.get("./freetype/8bitlim.ttf", FreeTypeFontGenerator.class);
 
@@ -98,7 +98,7 @@ public class SIM8 extends Game {
 			Gdx.app.exit();
 		else if (!RELEASE && Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.D)) {
 			DEVMODE = !DEVMODE;
-		} else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && screen != mainMenuScreen) {
+		} else if (DEVMODE && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && screen != mainMenuScreen) {
 			loadingScreen.setFadeWhenLoaded(true);
 			loadingScreen.setNextScreen(mainMenuScreen);
 			setScreen(loadingScreen);

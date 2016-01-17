@@ -26,9 +26,6 @@ public class Hull extends RepairableRoom {
 	private Image shipHull;
 	private EnemyShip enemy;
 
-	private float attackOriginX;
-	private float attackOriginY;
-
 	private Image laser1;
 	private Image laser2;
 	private Image laser3;
@@ -62,12 +59,15 @@ public class Hull extends RepairableRoom {
 
 		laser1 = new Image(atlas.findRegion("laser"));
 		laser1.setVisible(false);
+		laser1.setOrigin(laser1.getWidth() / 2f, laser1.getHeight() / 2f);
 		addActorAfter(shipHull, laser1);
 		laser2 = new Image(atlas.findRegion("laser"));
 		laser2.setVisible(false);
+		laser2.setOrigin(laser2.getWidth() / 2f, laser2.getHeight() / 2f);
 		addActorAfter(shipHull, laser2);
 		laser3 = new Image(atlas.findRegion("laser"));
 		laser3.setVisible(false);
+		laser3.setOrigin(laser3.getWidth() / 2f, laser3.getHeight() / 2f);
 		addActorAfter(shipHull, laser3);
 
 		laserSound = assetManager.get("./sounds/laser2.mp3", Sound.class);
@@ -78,8 +78,10 @@ public class Hull extends RepairableRoom {
 		Animation explosionAnimation = new Animation(.1f, atlas.findRegions("explosion"));
 		TextureRegion rocketRegion = atlas.findRegion("rocket");
 		rocket1 = new Rocket(rocketRegion, enemy, explosionAnimation, rocketsSound, rocketsExplodeSound);
+		rocket1.setOrigin(rocket1.getWidth() / 2f, rocket1.getHeight() / 2f);
 		addActorAfter(shipHull, rocket1);
 		rocket2 = new Rocket(rocketRegion, enemy, explosionAnimation, rocketsSound, rocketsExplodeSound);
+		rocket2.setOrigin(rocket2.getWidth() / 2f, rocket2.getHeight() / 2f);
 		addActorAfter(shipHull, rocket2);
 
 		travel = new Image(atlas.findRegion("travel"));
@@ -94,6 +96,11 @@ public class Hull extends RepairableRoom {
 
 	@Override
 	public void initialize() {
+	}
+
+	@Override
+	public void disableRoom() {
+		ship.gameOver();
 	}
 
 	@Override
@@ -163,13 +170,10 @@ public class Hull extends RepairableRoom {
 		this.enemy = enemy;
 
 		addActorBefore(shipHull, enemy);
-		enemy.setPosition((getWidth() - enemy.getWidth()) / 2f, getHeight() * .7f - enemy.getHeight() / 2f);
+		enemy.setPosition(getWidth() * .6f - enemy.getWidth() / 2f, getHeight() * .7f - enemy.getHeight() / 2f);
 	}
 
 	protected void fireLasers() {
-		attackOriginX = shipHull.getX() + 44;
-		attackOriginY = shipHull.getY() + 245;
-
 		fireLaser(laser1);
 		shipHull.addAction(sequence(
 				delay(.07f),
@@ -192,10 +196,14 @@ public class Hull extends RepairableRoom {
 	private void fireLaser(final Image laser) {
 		if (Options.sound)
 			laserSound.play(.015f);
-		laser.setPosition(attackOriginX, attackOriginY);
+
+		float attackOriginX = shipHull.getX() + 44;
+		float attackOriginY = shipHull.getY() + 245;
+
+		laser.setPosition(attackOriginX - laser.getWidth() / 2f, attackOriginY - laser.getHeight() / 2f);
 		laser.setVisible(true);
-		float x = (float) (enemy.getX() + enemy.getWidth() / 4f + Math.random() * enemy.getWidth() / 3f);
-		float y = (float) (enemy.getY() + enemy.getHeight() / 4f + Math.random() * enemy.getHeight() / 2f);
+		float x = (float) (enemy.getX() + enemy.getWidth() * .25f + Math.random() * enemy.getWidth() * .25f);
+		float y = (float) (enemy.getY() + enemy.getHeight() * .35f + Math.random() * enemy.getHeight() * .3f);
 		double distance = SIM8.distance(attackOriginX, attackOriginY, x, y);
 		if (y > attackOriginY)
 			laser.setRotation(90f - (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
@@ -216,9 +224,6 @@ public class Hull extends RepairableRoom {
 	}
 
 	protected void fireRockets() {
-		attackOriginX = shipHull.getX() + 44;
-		attackOriginY = shipHull.getY() + 245;
-
 		fireRocket(rocket1);
 		shipHull.addAction(sequence(
 				delay(.1f),
@@ -232,10 +237,13 @@ public class Hull extends RepairableRoom {
 	}
 
 	private void fireRocket(final Rocket rocket) {
-		rocket.setPosition(attackOriginX, attackOriginY);
+		float attackOriginX = shipHull.getX() + 44;
+		float attackOriginY = shipHull.getY() + 245;
+
+		rocket.setPosition(attackOriginX - rocket.getWidth() / 2f, attackOriginY - rocket.getHeight() / 2f);
 		rocket.launch();
-		float x = (float) (enemy.getX() + enemy.getHeight() / 4f + Math.random() * enemy.getWidth() / 3f);
-		float y = (float) (enemy.getY() + enemy.getHeight() / 4f + Math.random() * enemy.getHeight() / 2f);
+		float x = (float) (enemy.getX() + enemy.getWidth() * .25f + Math.random() * enemy.getWidth() * .3f);
+		float y = (float) (enemy.getY() + enemy.getHeight() * .35f + Math.random() * enemy.getHeight() * .3f);
 		double distance = SIM8.distance(attackOriginX, attackOriginY, x, y);
 		if (y > attackOriginY)
 			rocket.setRotation(- (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
