@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import fr.radnap.sim8.PlayerShip;
 import fr.radnap.sim8.SIM8;
 
@@ -117,6 +118,8 @@ public class GameScreen extends AbstractScreen {
 		stage.addActor(label);
 
 		label = new Label("> Back to the menu <", skin);
+		label.setAlignment(Align.center);
+		label.setSize(label.getWidth() * 1.5f, label.getHeight() * 3f);
 		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, SCREEN_HEIGHT / 2f - label.getHeight());
 		label.addListener(new ClickListener() {
 			@Override
@@ -139,6 +142,8 @@ public class GameScreen extends AbstractScreen {
 		stage.addActor(label);
 
 		label = new Label("> Back to the menu <", skin);
+		label.setAlignment(Align.center);
+		label.setSize(label.getWidth() * 1.5f, label.getHeight() * 3f);
 		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, SCREEN_HEIGHT / 2f - label.getHeight());
 		label.addListener(new ClickListener() {
 			@Override

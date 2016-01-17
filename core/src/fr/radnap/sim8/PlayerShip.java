@@ -82,6 +82,8 @@ public class PlayerShip implements Ship {
 
 	public void endFight() {
 		controlRoom.endFight();
+		if (pilotRoom.hasArrived())
+			ending();
 	}
 
 	public void gameOver() {

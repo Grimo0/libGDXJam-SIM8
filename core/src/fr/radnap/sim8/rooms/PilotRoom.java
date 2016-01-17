@@ -30,6 +30,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 public class PilotRoom extends Room {
 
 	private Group map;
+	private Star destination;
+	private TextureRegionDrawable destinationDrawable;
 	private TextureRegionDrawable starDrawable;
 	private TextureRegionDrawable starVisitedDrawable;
 	private Color[] colors;
@@ -56,6 +58,7 @@ public class PilotRoom extends Room {
 		map.addActor(nebula);
 		map.setSize(nebula.getPrefWidth(), nebula.getPrefHeight());
 
+		destinationDrawable = new TextureRegionDrawable(atlas.findRegion("destination"));
 		starDrawable = new TextureRegionDrawable(atlas.findRegion("star"));
 		starVisitedDrawable = new TextureRegionDrawable(atlas.findRegion("starVisited"));
 
@@ -103,14 +106,14 @@ public class PilotRoom extends Room {
 
 	private void generateStars(AssetManager assetManager) {
 		stars = new Array<>();
-		Star star;
+		Star star = null;
 		int size = (int) (20 + Math.random() * 10);
 		int random = 5;
 		for (int i = 0; i < size; i++) {
 			EnemyShip enemyShip = null;
 			if (Math.random() < 0.6f)
 				enemyShip = new EnemyShip(atlas, assetManager, ship, (int) (Math.random() * 8 + 1));
-			star = new Star(this.starDrawable, (int) (Math.random() * 30 + 1), enemyShip);
+			star = new Star(starDrawable, (int) (Math.random() * 30 + 1), enemyShip);
 			star.setPosition(10f + (10 - random + 2 * i) * 20f - star.getWidth() / 2f,
 					10f + (random + i + 3) * 20f - star.getHeight() / 2f);
 			star.addListener(new ClickListener() {
@@ -152,10 +155,9 @@ public class PilotRoom extends Room {
 
 			random = (int) (Math.random() * 10);
 		}
-	}
-
-	public boolean isTravelling() {
-		return travelling;
+		destination = star;
+		assert destination != null;
+		destination.setDrawable(destinationDrawable);
 	}
 
 	public void moveToClosestStar() {
@@ -229,6 +231,12 @@ public class PilotRoom extends Room {
 		ControlRoom controlRoom = (ControlRoom) rooms.get("ControlRoom");
 		controlRoom.arriveToPlanet();
 		controlRoom.encounterEnemy(star.getEnemyShip());
+		if (hasArrived())
+			ship.ending();
+	}
+
+	public boolean hasArrived() {
+		return currentStar.getEnemyShip() == null && currentStar == destination;
 	}
 
 	private float distanceSq(Star star) {
