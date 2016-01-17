@@ -42,7 +42,7 @@ public class MainMenuScreen extends AbstractScreen {
 
 			item = event.getListenerActor();
 			selected = table.getChildren().indexOf(item, true);
-			cursor.setY(table.getY() + item.getY() + (item.getHeight() - cursor.getHeight()) / 2);
+//			cursor.setY(table.getY() + item.getY() + (item.getHeight() - cursor.getHeight()) / 2);
 			stage.setKeyboardFocus(fromActor);
 		}
 	}
@@ -157,7 +157,7 @@ public class MainMenuScreen extends AbstractScreen {
 		newGame.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				game.loadingScreen.setFadeWhenLoaded(true);
+				game.loadingScreen.setFadeWhenLoaded(false);
 				game.loadingScreen.setNextScreen(game.gameScreen);
 				game.setScreen(game.loadingScreen);
 			}

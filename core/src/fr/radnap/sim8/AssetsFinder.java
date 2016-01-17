@@ -46,7 +46,8 @@ public class AssetsFinder {
 		this.resolver = resolver;
 
 		assets.add(new AssetDescriptor("music", null, Music.class));
-		assets.add(new AssetDescriptor("sound", null, Sound.class)); // You could remove all but this one (Why ?)
+		assets.add(new AssetDescriptor("sounds", ".mp3", Sound.class)); // You could remove all but this one (Why ?)
+		assets.add(new AssetDescriptor("sounds", ".wav", Sound.class)); // You could remove all but this one (Why ?)
 		assets.add(new AssetDescriptor("skin", "skin.json", Skin.class));
 		assets.add(new AssetDescriptor("atlas", ".atlas", TextureAtlas.class));
 //		assets.add(new AssetDescriptor("texture", null, Texture.class));

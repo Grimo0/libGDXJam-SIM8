@@ -1,16 +1,17 @@
 package fr.radnap.sim8.rooms;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import fr.radnap.sim8.*;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 
 /**
  * @author Radnap
@@ -18,36 +19,31 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class Hull extends RepairableRoom {
 
 	private Image stars;
-	private Image travel;
+
 	private TextureRegionDrawable planetDrawable;
 	private Image planet;
-	private Image ship;
-	private TextureRegionDrawable enemyDrawable;
-	private Image enemy;
+
+	private Image shipHull;
+	private EnemyShip enemy;
+
+	private float attackOriginX;
+	private float attackOriginY;
+
+	private Image laser1;
+	private Image laser2;
+	private Image laser3;
+	private Sound laserSound;
+	private Sound laserTouchedSound;
+
+	private Rocket rocket1;
+	private Rocket rocket2;
+
+	private Image travel;
+	private Sound travelSound;
 
 
-	public Hull(TextureAtlas atlas, float width, float height) {
-		super("Hull", atlas, width, height, 100);
-
-		addActionButton("takeOff", new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				enable("land");
-				disable("takeOff");
-				belowButtons.clearChildren();
-				belowButtons.add("Leave the planet surface.").row();
-			}
-		});
-
-		addActionButton("land", new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				enable("takeOff");
-				disable("land");
-				belowButtons.clearChildren();
-				belowButtons.add("Land on the planet.").row();
-			}
-		});
+	public Hull(PlayerShip ship, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
+		super(ship, "Hull", atlas, assetManager, width, height, .5f);
 
 		stars = new Image(atlas.findRegion("stars"));
 		stars.setSize(2 * width * stars.getWidth() / stars.getHeight(), 2 * width);
@@ -55,23 +51,44 @@ public class Hull extends RepairableRoom {
 		stars.setPosition(width - stars.getWidth() / 2f, (height - stars.getHeight()) / 2f);
 		addActorBefore(aboveButtons, stars);
 
-		travel = new Image(atlas.findRegion("travel"));
-		travel.setVisible(false);
-		travel.setPosition((width - travel.getWidth()) / 2f, (height - travel.getHeight()) / 2f);
-		addActorBefore(aboveButtons, travel);
-
 		planetDrawable = new TextureRegionDrawable();
 		planet = new Image();
 		addActorBefore(aboveButtons, planet);
 
-		ship = new Image(atlas.findRegion("blueship"));
-		ship.setPosition(5f, height - ship.getHeight() + 1f);
-		addActorBefore(aboveButtons, ship);
+		shipHull = new Image(atlas.findRegion("blueship"));
+		shipHull.setName("PlayerShipHull");
+		shipHull.setPosition(5f, (height - shipHull.getHeight()) / 2f + 2f);
+		addActorBefore(aboveButtons, shipHull);
 
-		enemyDrawable = new TextureRegionDrawable();
-		enemy = new Image();
-		enemy.setRotation(90f);
-		addActorBefore(aboveButtons, enemy);
+		laser1 = new Image(atlas.findRegion("laser"));
+		laser1.setVisible(false);
+		addActorAfter(shipHull, laser1);
+		laser2 = new Image(atlas.findRegion("laser"));
+		laser2.setVisible(false);
+		addActorAfter(shipHull, laser2);
+		laser3 = new Image(atlas.findRegion("laser"));
+		laser3.setVisible(false);
+		addActorAfter(shipHull, laser3);
+
+		laserSound = assetManager.get("./sounds/laser2.mp3", Sound.class);
+		laserTouchedSound = assetManager.get("./sounds/laserTouched.mp3", Sound.class);
+		Sound rocketsSound = assetManager.get("./sounds/laser.mp3", Sound.class);
+		Sound rocketsExplodeSound = assetManager.get("./sounds/explosion.mp3", Sound.class);
+
+		Animation explosionAnimation = new Animation(.1f, atlas.findRegions("explosion"));
+		TextureRegion rocketRegion = atlas.findRegion("rocket");
+		rocket1 = new Rocket(rocketRegion, enemy, explosionAnimation, rocketsSound, rocketsExplodeSound);
+		addActorAfter(shipHull, rocket1);
+		rocket2 = new Rocket(rocketRegion, enemy, explosionAnimation, rocketsSound, rocketsExplodeSound);
+		addActorAfter(shipHull, rocket2);
+
+		travel = new Image(atlas.findRegion("travel"));
+		travel.setVisible(false);
+		travel.setSize(width, width * travel.getHeight() / travel.getWidth());
+		travel.setPosition((width - travel.getWidth()) / 2f, (height - travel.getHeight()) / 2f);
+		addActorBefore(aboveButtons, travel);
+
+		travelSound = assetManager.get("./sounds/warpout.mp3");
 	}
 
 
@@ -82,41 +99,41 @@ public class Hull extends RepairableRoom {
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		if (!stars.hasActions()) {
-			stars.addAction(Actions.rotateBy(-.5f, 2f));
-			planet.addAction(Actions.rotateBy(1.5f, 2f));
-		}
-		if (!ship.hasActions()) {
-			ship.addAction(Actions.moveBy(0, (getHeight() - ship.getHeight() - ship.getY()) * 2f, 1f));
-			enemy.addAction(Actions.moveBy(0, (getHeight() * .7f - enemy.getWidth() * .5f - enemy.getY()) * 2f, 1f));
-			Action sequence = Actions.sequence(Actions.moveBy(((getWidth() + enemy.getHeight()) / 2f - enemy.getX()) * 2f, 0, .5f),
-					Actions.moveBy(-((getWidth() + enemy.getHeight()) / 2f - enemy.getX()) * 2f, 0, .5f));
-			enemy.addAction(sequence);
+		stars.rotateBy(-0.25f * delta);
+		planet.rotateBy(.75f * delta);
+		if (!shipHull.hasActions()) {
+			shipHull.addAction(Actions.moveBy(0, ((getHeight() - shipHull.getHeight()) / 2f - shipHull.getY()) * 2f, 1f));
 		}
 	}
 
-	public void travel() {
+	protected void travel() {
+		if (Options.sound)
+			travelSound.play(.1f);
 		seePlanet(-1);
-		seeEnemy(-1);
+		if (enemy != null) {
+			enemy.remove();
+			enemy = null;
+		}
 		travel.setVisible(true);
-		ship.setVisible(false);
+		shipHull.setVisible(false);
 		belowButtons.setVisible(false);
-		buttonsGroup.setVisible(false);
+		buttonsTable.setVisible(false);
 	}
 
-	public void arriveTo(int planetNumber) {
+	protected void arriveTo(int planetNumber) {
+		travelSound.stop();
 		travel.setVisible(false);
-		ship.setVisible(true);
+		shipHull.setVisible(true);
 		belowButtons.setVisible(true);
-		buttonsGroup.setVisible(true);
+		buttonsTable.setVisible(true);
 		seePlanet(planetNumber);
 	}
 
 	/**
-	 * @param number -1 to remove the planet
+	 * @param planetNumber -1 to remove the planet
 	 */
-	public void seePlanet(int number) {
-		if (number == -1) {
+	protected void seePlanet(int planetNumber) {
+		if (planetNumber == -1) {
 			disable("takeOff");
 			disable("land");
 			planet.setDrawable(null);
@@ -124,7 +141,7 @@ public class Hull extends RepairableRoom {
 		}
 		enable("land");
 
-		TextureAtlas.AtlasRegion region = atlas.findRegion("planets/planet", number);
+		TextureAtlas.AtlasRegion region = atlas.findRegion("planets/planet", planetNumber);
 		if (region != null) {
 			planetDrawable.setRegion(region);
 			planet.setDrawable(planetDrawable);
@@ -138,21 +155,101 @@ public class Hull extends RepairableRoom {
 	}
 
 	/**
-	 * @param enemyType -1 to remove the enemy
+	 * @param enemy -1 to remove the enemy
 	 */
-	public void seeEnemy(int enemyType) {
-		if (enemyType == -1) {
-			enemy.setDrawable(null);
-			return;
-		}
+	protected void seeEnemy(EnemyShip enemy) {
+		if (enemy == null) return;
 
-		TextureAtlas.AtlasRegion region = atlas.findRegion("enemy", enemyType);
-		if (region != null) {
-			enemyDrawable.setRegion(region);
-			enemy.setDrawable(enemyDrawable);
-			enemy.setSize(enemy.getPrefWidth(), enemy.getPrefHeight());
-			enemy.setPosition((getWidth() + enemy.getHeight()) / 2f + .5f, getHeight() * .7f - enemy.getWidth() * .5f + 1f);
-			enemy.clearActions();
-		}
+		this.enemy = enemy;
+
+		addActorBefore(shipHull, enemy);
+		enemy.setPosition((getWidth() - enemy.getWidth()) / 2f, getHeight() * .7f - enemy.getHeight() / 2f);
+	}
+
+	protected void fireLasers() {
+		attackOriginX = shipHull.getX() + 44;
+		attackOriginY = shipHull.getY() + 245;
+
+		fireLaser(laser1);
+		shipHull.addAction(sequence(
+				delay(.07f),
+				run(new Runnable() {
+					@Override
+					public void run() {
+						fireLaser(laser2);
+					}
+				}),
+				delay(.07f),
+				run(new Runnable() {
+					@Override
+					public void run() {
+						fireLaser(laser3);
+					}
+				})
+		));
+	}
+
+	private void fireLaser(final Image laser) {
+		if (Options.sound)
+			laserSound.play(.015f);
+		laser.setPosition(attackOriginX, attackOriginY);
+		laser.setVisible(true);
+		float x = (float) (enemy.getX() + enemy.getWidth() / 4f + Math.random() * enemy.getWidth() / 3f);
+		float y = (float) (enemy.getY() + enemy.getHeight() / 4f + Math.random() * enemy.getHeight() / 2f);
+		double distance = SIM8.distance(attackOriginX, attackOriginY, x, y);
+		if (y > attackOriginY)
+			laser.setRotation(90f - (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+		else
+			laser.setRotation(90f + (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+		laser.addAction(sequence(
+				moveTo(x, y, (float) (distance / 500f)),
+				Actions.run(new Runnable() {
+					@Override
+					public void run() {
+						enemy.takeDamages(ship.getLaserDamages());
+						laser.setVisible(false);
+						if (Options.sound)
+							laserTouchedSound.play(.03f);
+					}
+				})
+		));
+	}
+
+	protected void fireRockets() {
+		attackOriginX = shipHull.getX() + 44;
+		attackOriginY = shipHull.getY() + 245;
+
+		fireRocket(rocket1);
+		shipHull.addAction(sequence(
+				delay(.1f),
+				run(new Runnable() {
+					@Override
+					public void run() {
+						fireRocket(rocket2);
+					}
+				})
+		));
+	}
+
+	private void fireRocket(final Rocket rocket) {
+		rocket.setPosition(attackOriginX, attackOriginY);
+		rocket.launch();
+		float x = (float) (enemy.getX() + enemy.getHeight() / 4f + Math.random() * enemy.getWidth() / 3f);
+		float y = (float) (enemy.getY() + enemy.getHeight() / 4f + Math.random() * enemy.getHeight() / 2f);
+		double distance = SIM8.distance(attackOriginX, attackOriginY, x, y);
+		if (y > attackOriginY)
+			rocket.setRotation(- (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+		else
+			rocket.setRotation(-(float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+		rocket.addAction(sequence(
+				moveTo(x, y, (float) (distance / 300f)),
+				Actions.run(new Runnable() {
+					@Override
+					public void run() {
+						rocket.explode();
+					}
+				})
+		));
+
 	}
 }

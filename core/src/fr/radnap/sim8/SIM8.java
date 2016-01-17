@@ -20,7 +20,7 @@ import fr.radnap.sim8.screens.*;
 public class SIM8 extends Game {
 
 	public static final String NAME = "SIM8";
-	public static final String VERSION = "0.4.0";
+	public static final String VERSION = "0.5.0";
 	public static boolean RELEASE = false;
 	public static boolean DEVMODE = false;
 
@@ -78,7 +78,7 @@ public class SIM8 extends Game {
 		assetManager.finishLoading();
 
 		titleGen = assetManager.get("./freetype/ProggySquareSZ.ttf", FreeTypeFontGenerator.class);
-		title2Gen = assetManager.get("./freetype/kenvector_future_thin.ttf", FreeTypeFontGenerator.class);
+		title2Gen = assetManager.get("./freetype/8bitlim.ttf", FreeTypeFontGenerator.class);
 		commonGen = assetManager.get("./freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
 		numberGen = assetManager.get("./freetype/8bitlim.ttf", FreeTypeFontGenerator.class);
 
@@ -131,5 +131,9 @@ public class SIM8 extends Game {
 
 	public static void debug(String message) {
 		logger.debug(message);
+	}
+
+	public static double distance(float x1, float y1, float x2, float y2) {
+		return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 	}
 }

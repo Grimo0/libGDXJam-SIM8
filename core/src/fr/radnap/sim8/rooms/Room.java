@@ -1,8 +1,7 @@
 package fr.radnap.sim8.rooms;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.backends.lwjgl.audio.Wav;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -18,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
 import fr.radnap.sim8.Options;
-import fr.radnap.sim8.SIM8;
+import fr.radnap.sim8.PlayerShip;
 import fr.radnap.sim8.screens.GameScreen;
 
 /**
@@ -26,26 +25,29 @@ import fr.radnap.sim8.screens.GameScreen;
  */
 public abstract class Room extends Table {
 
+	protected PlayerShip ship;
 	protected static ObjectMap<String, Room> rooms = new ObjectMap<>();
 
-	protected final String name;
 	protected final TextureAtlas atlas;
 
 	private Animation backgroundAnimation;
 	private TextureRegionDrawable backgroundDrawable;
 	protected float stateTime;
+	private Image disabled;
 
-	private Sound buttonSound;
-	private Sound buttonReleasedSound;
+	protected Sound buttonSound;
+	protected ClickListener buttonSoundClickListener;
 	protected ObjectMap<String, Button> buttons;
-	protected HorizontalGroup buttonsGroup;
+	protected Table buttonsTable;
 	protected Table aboveButtons;
 	protected Table belowButtons;
 
 
-	public Room(String name, TextureAtlas atlas, float width, float height) {
+	public Room(PlayerShip ship, String name, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
+		this.ship = ship;
 		rooms.put(name, this);
-		this.name = name;
+		setName(name);
+		this.atlas = atlas;
 		setSize(width, height);
 
 		backgroundAnimation = new Animation(0.4f, atlas.findRegions(name));
@@ -53,20 +55,33 @@ public abstract class Room extends Table {
 		setBackground(backgroundDrawable);
 		setClip(true);
 
-		buttonSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click1.wav"));
-		buttonReleasedSound = Gdx.audio.newSound(Gdx.files.internal("sounds/rollover3.wav"));
+		buttonSound = assetManager.get("./sounds/click.wav");
+
+		buttonSoundClickListener = new ClickListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				if (Options.sound)
+					buttonSound.play(.4f);
+				return super.touchDown(event, x, y, pointer, button);
+			}
+		};
 
 		buttons = new OrderedMap<>();
-		this.atlas = atlas;
+
+		buttonsTable = new Table();
+		buttonsTable.center().bottom();
+		buttonsTable.defaults().space(25f);
+		addActor(buttonsTable);//.expandX();//.height(96);
+//		row();
+
+		disabled = new Image(atlas.findRegion("disabledRoom"));
+		disabled.setVisible(false);
+		disabled.setSize(width, height);
+		addActor(disabled);
 
 		aboveButtons = new Table(GameScreen.skin);
 		aboveButtons.top().left();
 		add(aboveButtons).pad(4f, 5f, 4f, 5f).top().left().expand().width(width - 9f);//.height((height - 116f) * .5f);
-		row();
-
-		buttonsGroup = new HorizontalGroup();
-		buttonsGroup.space(25f);
-		add(buttonsGroup).height(96).expandX();
 		row();
 
 		Image roomFrame = new Image(atlas.createPatch("roomFrame"));
@@ -77,9 +92,13 @@ public abstract class Room extends Table {
 		belowButtons = new Table(GameScreen.skin);
 		belowButtons.setBackground(new NinePatchDrawable(atlas.createPatch("glassPanel")));
 		belowButtons.top().left().pad(10f, 7f, 10f, 7f);
-		belowButtons.defaults().space(5f);
+		belowButtons.defaults().left().space(5f);
 		add(belowButtons).pad(10f, 0f, 0f, 0f).bottom().left().width(width + 1).height(71f);
 		row();
+
+		validate();
+
+		buttonsTable.setY(belowButtons.getY() + belowButtons.getHeight() + belowButtons.getPadTop());
 	}
 
 
@@ -92,22 +111,26 @@ public abstract class Room extends Table {
 		backgroundDrawable.setRegion(backgroundAnimation.getKeyFrame(stateTime, true));
 	}
 
-	protected void addActionButton(String action, ChangeListener changeListener) {
-		addActionButton(action, changeListener, new ClickListener() {
-			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (Options.sound)
-				buttonSound.play(.4f);
-				return super.touchDown(event, x, y, pointer, button);
-			}
-		});
+	public void disableRoom() {
+//		for (ObjectMap.Entry<String, Button> button : buttons) {
+//			button.value.setDisabled(true);
+//		}
+		disabled.setVisible(true);
+	}
+
+	public void enableRoom() {
+		disabled.setVisible(false);
+	}
+
+	protected Button addActionButton(String action, ChangeListener changeListener) {
+		return addActionButton(action, changeListener, buttonSoundClickListener);
 	}
 
 	/**
 	 * Add a button to the group and attache it the ChangeListener.
 	 * By default, it is disabled
 	 */
-	protected void addActionButton(String action, ChangeListener changeListener, ClickListener clickListener) {
+	protected Button addActionButton(String action, ChangeListener changeListener, ClickListener clickListener) {
 		Button.ButtonStyle style = new Button.ButtonStyle();
 		style.up = new TextureRegionDrawable(atlas.findRegion("buttons/" + action + "ButtonUp"));
 		style.down = new TextureRegionDrawable(atlas.findRegion("buttons/" + action + "ButtonDown"));
@@ -115,20 +138,23 @@ public abstract class Room extends Table {
 		Button button = new Button(style);
 		button.setDisabled(true);
 		button.addListener(changeListener);
-		button.addListener(clickListener);
+		if (clickListener != null)
+			button.addListener(clickListener);
 
-		buttonsGroup.addActor(button);
 		buttons.put(action, button);
+		buttonsTable.add(button);
+		buttonsTable.setX(getWidth() / 2f);
+		return button;
 	}
 
-	public void disable(String action) {
+	protected void disable(String action) {
 		Button button = buttons.get(action);
 		if (button != null && !button.isDisabled()) {
 			button.setDisabled(true);
 		}
 	}
 
-	public void enable(String action) {
+	protected void enable(String action) {
 		Button button = buttons.get(action);
 		if (button != null && button.isDisabled()) {
 			button.setDisabled(false);
@@ -137,7 +163,7 @@ public abstract class Room extends Table {
 
 	@Override
 	public boolean remove() {
-		rooms.remove(name);
+		rooms.remove(getName());
 		buttonSound.dispose();
 		return super.remove();
 	}

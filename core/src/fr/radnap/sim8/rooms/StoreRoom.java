@@ -1,9 +1,11 @@
 package fr.radnap.sim8.rooms;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import fr.radnap.sim8.PlayerShip;
 
 /**
  * @author Radnap
@@ -14,8 +16,8 @@ public class StoreRoom extends Room {
 	private Label resourcesLabel;
 
 
-	public StoreRoom(TextureAtlas atlas, float width, float height) {
-		super("StoreRoom", atlas, width, height);
+	public StoreRoom(PlayerShip ship, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
+		super(ship, "StoreRoom", atlas, assetManager, width, height);
 
 		resources = 85;
 
@@ -39,7 +41,7 @@ public class StoreRoom extends Room {
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		resourcesLabel.setText(String.valueOf(resources) + "r");
+		resourcesLabel.setText(String.valueOf(resources) + " r");
 	}
 
 	public int getResources() {
