@@ -109,18 +109,24 @@ public class GameScreen extends AbstractScreen {
 		playerShip.initialize();
 	}
 
-	public void gameOver() {
+	public void gameOver(String comment) {
 		overlay.setTouchable(Touchable.enabled);
 		overlay.addAction(Actions.fadeIn(.3f));
 
-		Label label = new Label("Game Over", skin, "title");
+		Label label = new Label("You Fail", skin, "title");
 		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, (SCREEN_HEIGHT + label.getHeight()) / 2f);
 		stage.addActor(label);
+
+		Label commentLabel = new Label(comment, skin);
+		commentLabel.setAlignment(Align.center);
+		commentLabel.setSize(commentLabel.getWidth() * 1.5f, commentLabel.getHeight() * 3f);
+		commentLabel.setPosition((SCREEN_WIDTH - commentLabel.getWidth()) / 2f, SCREEN_HEIGHT / 2f - commentLabel.getHeight());
+		stage.addActor(commentLabel);
 
 		label = new Label("> Back to the menu <", skin);
 		label.setAlignment(Align.center);
 		label.setSize(label.getWidth() * 1.5f, label.getHeight() * 3f);
-		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, SCREEN_HEIGHT / 2f - label.getHeight());
+		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, commentLabel.getY() - 2f * label.getHeight());
 		label.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -141,10 +147,16 @@ public class GameScreen extends AbstractScreen {
 		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, (SCREEN_HEIGHT + label.getHeight()) / 2f);
 		stage.addActor(label);
 
+		Label commentLabel = new Label("You manage to take the crew back to the headquarters.", skin);
+		commentLabel.setAlignment(Align.center);
+		commentLabel.setSize(commentLabel.getWidth() * 1.5f, commentLabel.getHeight() * 3f);
+		commentLabel.setPosition((SCREEN_WIDTH - commentLabel.getWidth()) / 2f, SCREEN_HEIGHT / 2f - commentLabel.getHeight());
+		stage.addActor(commentLabel);
+
 		label = new Label("> Back to the menu <", skin);
 		label.setAlignment(Align.center);
 		label.setSize(label.getWidth() * 1.5f, label.getHeight() * 3f);
-		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, SCREEN_HEIGHT / 2f - label.getHeight());
+		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, commentLabel.getY() - 2f * label.getHeight());
 		label.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {

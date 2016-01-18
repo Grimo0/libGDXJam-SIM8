@@ -12,7 +12,11 @@ import fr.radnap.sim8.screens.GameScreen;
 public class PlayerShip implements Ship {
 
 	private boolean gameOver;
+
+	private int consecutiveDamages;
+
 	private final GameScreen gameScreen;
+
 	private PilotRoom pilotRoom;
 	private ControlRoom controlRoom;
 	private Hull hull;
@@ -22,6 +26,7 @@ public class PlayerShip implements Ship {
 	public PlayerShip(GameScreen gameScreen, TextureAtlas atlas, AssetManager assetManager) {
 		this.gameScreen = gameScreen;
 		gameOver = false;
+		consecutiveDamages = 0;
 
 		pilotRoom = new PilotRoom(this, atlas, assetManager, 880f, 550f);
 		gameScreen.getStage().addActor(pilotRoom);
@@ -46,7 +51,6 @@ public class PlayerShip implements Ship {
 		controlRoom.initialize();
 		hull.initialize();
 		restRoom.initialize();
-		hull.takeDamages(90);
 	}
 
 	public Hull getHull() {
@@ -72,17 +76,23 @@ public class PlayerShip implements Ship {
 			controlRoom.takeDamages(2 * damages);
 		}
 		hull.takeDamages(damages);
+		consecutiveDamages += damages;
+		if (consecutiveDamages > 10) {
+			restRoom.increaseStress();
+			consecutiveDamages = 0;
+		}
 	}
 
 	public void endFight() {
+		consecutiveDamages = 0;
 		controlRoom.endFight();
 		if (pilotRoom.hasArrived())
 			ending();
 	}
 
-	public void gameOver() {
+	public void gameOver(String comment) {
 		gameOver = true;
-		gameScreen.gameOver();
+		gameScreen.gameOver(comment);
 	}
 
 	public void ending() {

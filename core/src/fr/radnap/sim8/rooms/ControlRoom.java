@@ -15,6 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import fr.radnap.sim8.EnemyShip;
 import fr.radnap.sim8.PlayerShip;
+import fr.radnap.sim8.Star;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 /**
  * @author Radnap
@@ -33,13 +36,14 @@ public class ControlRoom extends RepairableRoom {
 	private float rocketsTime;
 	private TextureRegionDrawable rocketsLoadingDrawable;
 	private Image rocketsLoading;
+	private Star currentStar;
 
 
 	public ControlRoom(PlayerShip ship, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
 		super(ship, "ControlRoom", atlas, assetManager, width, height, .5f);
 
 		resources = 85;
-		resourcesLabel = aboveButtons.add("", "number").padRight(10f).right().expandX().getActor();
+		resourcesLabel = aboveButtons.add(resources + " r", "number").padRight(10f).right().expandX().getActor();
 
 		Button laser = addActionButton("laser", new ChangeListener() {
 			@Override
@@ -63,10 +67,36 @@ public class ControlRoom extends RepairableRoom {
 			}
 		}, null);
 
-		addActionButton("leave", new ChangeListener() {
+//		addActionButton("leave", new ChangeListener() {
+//			@Override
+//			public void changed(ChangeEvent event, Actor actor) {
+//				((PilotRoom) rooms.get("PilotRoom")).moveToClosestStar();
+//			}
+//		});
+
+		addActionButton("harvest", new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				((PilotRoom) rooms.get("PilotRoom")).moveToClosestStar();
+				if (currentStar == null) return;
+
+				int taken = currentStar.takeResources();
+				if (taken == 0) return;
+
+				resources += taken;
+				resourcesLabel.setText(resources + " r");
+				resourcesLabel.setColor(Color.WHITE);
+				final Label conso = aboveButtons.add("" + taken, "number").colspan(100).padRight(25f).right().getActor();
+				resourcesLabel.addAction(sequence(
+						delay(1f),
+						run(new Runnable() {
+							@Override
+							public void run() {
+								conso.remove();
+							}
+						})
+				));
+				if (!currentStar.hasResources())
+					disable("harvest");
 			}
 		});
 
@@ -96,8 +126,6 @@ public class ControlRoom extends RepairableRoom {
 	public void act(float delta) {
 		super.act(delta);
 
-		resourcesLabel.setText(String.valueOf(resources) + " r");
-
 		if (laserTime > 0) {
 			laserTime -= delta;
 			if (laserTime < 0) {
@@ -108,6 +136,7 @@ public class ControlRoom extends RepairableRoom {
 				laserLoadingDrawable.setRegion(loading.getKeyFrame(stateTime, true));
 			}
 		}
+
 		if (rocketsTime > 0) {
 			rocketsTime -= delta;
 			if (rocketsTime < 0) {
@@ -124,22 +153,55 @@ public class ControlRoom extends RepairableRoom {
 		return resources;
 	}
 
+	public boolean canUse(int amount) {
+		return amount < resources;
+	}
+
 	public int use(int amount) {
 		if (resources > amount) {
 			resources -= amount;
+			resourcesLabel.setText(resources + " r");
+			final Label conso = aboveButtons.add("-" + amount, "number").colspan(100).padRight(25f).right().getActor();
+			resourcesLabel.addAction(sequence(
+					delay(1f),
+					run(new Runnable() {
+						@Override
+						public void run() {
+							conso.remove();
+						}
+					})
+			));
 			return amount;
 		}
+
 		amount = resources;
 		resources = 0;
+		resourcesLabel.setText(resources + " r");
+		resourcesLabel.setColor(Color.SCARLET);
+		final Label conso = aboveButtons.add("-" + amount, "number").colspan(100).padRight(25f).right().getActor();
+		resourcesLabel.addAction(sequence(
+				delay(1f),
+				run(new Runnable() {
+					@Override
+					public void run() {
+						conso.remove();
+					}
+				})
+		));
+
 		return amount;
 	}
 
-	public void arriveToPlanet() {
+	public void arriveToPlanet(Star star) {
 		enable("leave");
+		currentStar = star;
+		if (currentStar.hasResources())
+			enable("harvest");
 	}
 
 	public void leavePlanet() {
 		endFight();
+		currentStar = null;
 	}
 
 	public void encounterEnemy(EnemyShip enemyShip) {

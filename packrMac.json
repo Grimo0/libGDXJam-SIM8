@@ -1,0 +1,17 @@
+{
+    "platform": "mac",
+    "jdk": "openjdk-1.7.0-u80-unofficial-macosx-x86_64-image.zip",
+    "executable": "TheBulb",
+    "classpath": [
+        "LD34/desktop/build/libs/desktop-1.0.jar"
+    ],
+    "mainclass": "fr.langladure.ld34.desktop.DesktopLauncher",
+    "vmargs": [
+       "-Xmx1G"
+    ],
+    "resources": [
+        "LD34/android/assets/"
+    ],
+    "minimizejre": "hard",
+    "outdir": "LD34/build/mac"
+}

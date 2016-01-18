@@ -37,7 +37,7 @@ public class EnemyShip extends Group implements Ship {
 		this.enemyType = enemyType;
 		life = 20 + ((enemyType - 1) % 4) * 5;
 		damages = 2 + ((enemyType - 1) % 4) / 2;
-		fireRate = .3f * ((enemyType - 1) % 4 + 1) + 1f;
+		fireRate = .3f * ((enemyType - 1) % 4) + 1f;
 		stateTime = 0f;
 
 		ship = new Image(atlas.findRegion("enemy", enemyType));

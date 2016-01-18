@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -28,6 +29,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
  * @author Radnap
  */
 public class PilotRoom extends Room {
+
+	private boolean canMove;
 
 	private Group map;
 	private Star destination;
@@ -51,6 +54,7 @@ public class PilotRoom extends Room {
 		super(ship, "PilotRoom", atlas, assetManager, width, height);
 		travelling = false;
 
+		canMove = false;
 		map = new Group();
 		addActorBefore(aboveButtons, map);
 
@@ -75,8 +79,8 @@ public class PilotRoom extends Room {
 		sizes[2] = 1.3f;
 
 		reachable = new Image(atlas.findRegion("reachable"));
-		reachable.setOrigin(reachable.getWidth() / 2f, reachable.getHeight() / 2f);
 		reachable.setSize(reachable.getWidth() * .9f, reachable.getHeight() * .9f);
+		reachable.setOrigin(reachable.getWidth() / 2f, reachable.getHeight() / 2f);
 		map.addActor(reachable);
 
 		generateStars(assetManager);
@@ -90,6 +94,23 @@ public class PilotRoom extends Room {
 		reachable.setPosition(currentStar.getX() + (currentStar.getWidth() - reachable.getWidth()) / 2f,
 				currentStar.getY() + (currentStar.getHeight() - reachable.getHeight()) / 2f);
 		map.addActor(current);
+
+		// TUTORIAL
+		map.addAction(sequence(
+				delay(.5f),
+				moveTo(Math.max(getWidth() - map.getWidth(), getWidth() / 2f - destination.getX()),
+						Math.max(getHeight() - map.getHeight(), getHeight() / 2f - destination.getY()), 2f),
+				delay(2f),
+				moveTo(0, 0, 3f),
+				run(new Runnable() {
+					@Override
+					public void run() {
+						canMove = true;
+					}
+				})
+		));
+		belowButtons.add("You need to reach the destination").row();
+		belowButtons.add("with the crew alive.").row();
 	}
 
 
@@ -112,7 +133,7 @@ public class PilotRoom extends Room {
 		int random = 5;
 		for (int i = 0; i < size; i++) {
 			EnemyShip enemyShip = null;
-			if (Math.random() < 0.6f)
+			if (Math.random() < 0.7f)
 				enemyShip = new EnemyShip(atlas, assetManager, ship, (int) (Math.random() * 8 + 1));
 			star = new Star(starDrawable, (int) (Math.random() * 30 + 1), enemyShip);
 			star.setPosition(10f + (10 - random + 2 * i) * 20f - star.getWidth() / 2f,
@@ -121,7 +142,7 @@ public class PilotRoom extends Room {
 				@Override
 				public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
 					Star star = (Star) event.getListenerActor();
-					if (Math.sqrt(distanceSq(star)) > .94f * reachable.getWidth() / 2f)
+					if (!canMove || Math.sqrt(distanceSq(star)) > .94f * reachable.getWidth() / 2f)
 						return;
 
 					super.enter(event, x, y, pointer, fromActor);
@@ -132,7 +153,7 @@ public class PilotRoom extends Room {
 				@Override
 				public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
 					Star star = (Star) event.getListenerActor();
-					if (Math.sqrt(distanceSq(star)) > .94f * reachable.getWidth() / 2f)
+					if (!canMove || Math.sqrt(distanceSq(star)) > .94f * reachable.getWidth() / 2f)
 						return;
 
 					super.exit(event, x, y, pointer, toActor);
@@ -143,7 +164,7 @@ public class PilotRoom extends Room {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					Star star = (Star) event.getListenerActor();
-					if (Math.sqrt(distanceSq(star)) > .94f * reachable.getWidth() / 2f)
+					if (!canMove || Math.sqrt(distanceSq(star)) > .94f * reachable.getWidth() / 2f)
 						return;
 
 					if (!travelling)
@@ -162,6 +183,8 @@ public class PilotRoom extends Room {
 	}
 
 	public void moveToClosestStar() {
+		if (!canMove) return;
+
 		float shortest = Float.MAX_VALUE;
 		Star closest = null;
 		float distanceSq;
@@ -178,6 +201,8 @@ public class PilotRoom extends Room {
 	}
 
 	private void leaveFor(final Star star) {
+		if (!canMove) return;
+
 		if (currentStar.getEnemyShip() != null) {
 			belowButtons.clearChildren();
 			final Label leaveLabel = belowButtons.add("We can't leave while we're attacked.").getActor();
@@ -191,10 +216,26 @@ public class PilotRoom extends Room {
 			return;
 		}
 
+		ControlRoom controlRoom = (ControlRoom) rooms.get("ControlRoom");
+		double distance = Math.sqrt(distanceSq(star));
+		if (!controlRoom.canUse((int) (distance / 20f))) {
+			final Label leaveLabel = belowButtons.add("We don't have enough resources.").getActor();
+			belowButtons.row();
+			addAction(sequence(delay(5f, run(new Runnable() {
+				@Override
+				public void run() {
+					leaveLabel.remove();
+				}
+			}))));
+			return;
+		}
+
+		controlRoom.use((int) (distance / 20f));
+
 		travelling = true;
 
 		current.clearActions();
-		float duration = (float) (Math.sqrt(distanceSq(star)) / 150f);
+		float duration = (float) (distance / 150f);
 		current.addAction(sequence(
 				moveTo(star.getX() + (star.getWidth() - current.getWidth()) / 2f,
 						star.getY() + star.getHeight(), duration),
@@ -212,7 +253,7 @@ public class PilotRoom extends Room {
 				duration));
 
 		((Hull) rooms.get("Hull")).travel();
-		((ControlRoom) rooms.get("ControlRoom")).leavePlanet();
+		controlRoom.leavePlanet();
 	}
 
 	private void arriveTo(Star star) {
@@ -230,7 +271,7 @@ public class PilotRoom extends Room {
 
 		((Hull) rooms.get("Hull")).arriveTo(star.getPlanetNumber());
 		ControlRoom controlRoom = (ControlRoom) rooms.get("ControlRoom");
-		controlRoom.arriveToPlanet();
+		controlRoom.arriveToPlanet(currentStar);
 		controlRoom.encounterEnemy(star.getEnemyShip());
 		if (hasArrived())
 			ship.ending();

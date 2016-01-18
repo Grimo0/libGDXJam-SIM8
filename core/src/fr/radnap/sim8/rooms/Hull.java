@@ -100,7 +100,7 @@ public class Hull extends RepairableRoom {
 
 	@Override
 	public void disableRoom() {
-		ship.gameOver();
+		ship.gameOver("The ship is wrecked.");
 	}
 
 	@Override
