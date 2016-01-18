@@ -100,11 +100,11 @@ public class MainMenuScreen extends AbstractScreen {
 		skin.add("title", labelStyle);
 
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-		fontParams.size = 100;
+		fontParams.size = 80;
 		fontParams.shadowColor = new Color(.1f, 0f, 0f, 0.4f);
 		textButtonStyle.font = SIM8.title2Gen.generateFont(fontParams);
 		textButtonStyle.overFontColor = Color.WHITE;
-		textButtonStyle.fontColor = Color.LIGHT_GRAY;
+		textButtonStyle.fontColor = Color.GRAY;
 		skin.add("default", textButtonStyle);
 
 		labelStyle = new Label.LabelStyle();
@@ -122,10 +122,12 @@ public class MainMenuScreen extends AbstractScreen {
 		skin.add("credits2", labelStyle);
 
 
-		Label title = new Label(SIM8.NAME, skin, "title");
+//		Label title = new Label(SIM8.NAME, skin, "title");
+		Image title = new Image(atlas.findRegion("logo"));
 		stage.addActor(title);
+		title.setSize(title.getWidth() * 1.1f, title.getHeight() * .8f);
 		title.setX((SCREEN_WIDTH - title.getWidth()) / 2f);
-		title.setY(0.85f * stage.getHeight() - 0.5f * title.getHeight());
+		title.setY(0.82f * stage.getHeight() - 0.5f * title.getHeight());
 
 
 		Label credits = new Label("Radnap #libGDXJam", skin, "credits");
@@ -149,7 +151,7 @@ public class MainMenuScreen extends AbstractScreen {
 		stage.addActor(table);
 		table.left().bottom();
 		// Setting the default value of the cells
-		table.defaults().left().spaceTop(Value.percentHeight(0.8f));
+		table.defaults().left().spaceTop(Value.percentHeight(1f));
 		table.setX(0.15f * SCREEN_WIDTH);
 		table.setY(0.3f * SCREEN_HEIGHT);
 
@@ -250,7 +252,7 @@ public class MainMenuScreen extends AbstractScreen {
 		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
 		for (float x = 0; x < SCREEN_WIDTH; x += screenBg.getWidth() - 1f * ratio) {
-			for (float y = -screenBg.getHeight() / 2f; y < SCREEN_HEIGHT; y += screenBg.getHeight() - 1f * ratio) {
+			for (float y = -screenBg.getHeight() * .08f; y < SCREEN_HEIGHT; y += screenBg.getHeight() - 1f * ratio) {
 				screenBg.setPosition(x, y);
 				screenBg.draw(game.batch);
 			}

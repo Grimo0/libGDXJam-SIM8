@@ -81,6 +81,7 @@ public class PilotRoom extends Room {
 
 		generateStars(assetManager);
 		currentStar = stars.get(0);
+		currentStar.setEnemyShip(null);
 
 		currentAnimation = new Animation(0.2f, atlas.findRegions("currentPosition"));
 		currentDrawable = new TextureRegionDrawable(currentAnimation.getKeyFrame(0));

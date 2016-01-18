@@ -69,16 +69,16 @@ public class OptionScreen extends AbstractScreen {
 		FreeTypeFontGenerator.FreeTypeFontParameter fontParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		fontParams.minFilter = Texture.TextureFilter.Linear;
 		fontParams.magFilter = Texture.TextureFilter.Linear;
-		fontParams.size = (int) (0.1f * stage.getHeight());
-		fontParams.shadowColor = new Color(0f, 0f, 0f, 0.3f);
+		fontParams.size = 80;
+		fontParams.shadowColor = new Color(.1f, 0f, 0f, 0.4f);
 		fontParams.shadowOffsetX = 3;
 		fontParams.shadowOffsetY = 3;
 		BitmapFont font = SIM8.title2Gen.generateFont(fontParams);
 
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 		textButtonStyle.font = font;
-		textButtonStyle.overFontColor = Color.BLACK;
-		textButtonStyle.fontColor = new Color(0.14f, 0.14f, 0.18f, 1f);
+		textButtonStyle.overFontColor = Color.WHITE;
+		textButtonStyle.fontColor = Color.GRAY;
 		skin.add("default", textButtonStyle);
 
 
@@ -88,22 +88,24 @@ public class OptionScreen extends AbstractScreen {
 		table.left().bottom();
 		// Setting the default value of the cells
 		table.defaults().left().spaceTop(Value.percentHeight(0.5f));
-		table.setX(0.15f * stage.getWidth());
-		table.setY(0.2f * stage.getHeight());
+		table.setX(0.15f * SCREEN_WIDTH);
+		table.setY(0.3f * SCREEN_HEIGHT);
 
 
 		optionsTable = new Table(skin);
-		optionsTable.defaults().left().spaceBottom(Value.percentHeight(0.15f));
+		optionsTable.defaults().left().padLeft(30f).spaceBottom(Value.percentHeight(1f));
 
-		TextButton soundButton = new TextButton("Son : oui", skin);
+		TextButton soundButton = new TextButton("Son : yes", skin);
+		if (!Options.sound)
+			soundButton.setText("Son: no");
 		soundButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				TextButton soundButton = (TextButton) actor;
 				if (Options.sound)
-					soundButton.setText("Son : non");
+					soundButton.setText("Son : no");
 				else
-					soundButton.setText("Son : oui");
+					soundButton.setText("Son : yes");
 			}
 		});
 		optionsTable.add(soundButton).row();
@@ -117,20 +119,20 @@ public class OptionScreen extends AbstractScreen {
 		});
 		optionsTable.add(graphicButton).row();
 
-		TextButton backButton = new TextButton("Retour", skin);
+		TextButton backButton = new TextButton("<Back", skin);
 		backButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				game.setScreen(game.mainMenuScreen);
 			}
 		});
-		optionsTable.add(backButton).row();
+		optionsTable.add(backButton).padLeft(0).row();
 
 
 		graphicTable = new Table(skin);
-		graphicTable.defaults().left().spaceBottom(Value.percentHeight(0.15f));
+		graphicTable.defaults().left().padLeft(30f).spaceBottom(Value.percentHeight(1f));
 
-		TextButton averageResolution = new TextButton(" 1280*720", skin);
+		TextButton averageResolution = new TextButton("1280*720", skin);
 		averageResolution.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -139,7 +141,7 @@ public class OptionScreen extends AbstractScreen {
 		});
 		graphicTable.add(averageResolution).row();
 
-		TextButton highResolution = new TextButton(" 1920*1080", skin);
+		TextButton highResolution = new TextButton("1920*1080", skin);
 		highResolution.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -148,14 +150,14 @@ public class OptionScreen extends AbstractScreen {
 		});
 		graphicTable.add(highResolution).row();
 
-		backButton = new TextButton("<", skin);
+		backButton = new TextButton("<Back", skin);
 		backButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				optionsCell.setActor(optionsTable);
 			}
 		});
-		graphicTable.add(backButton).row();
+		graphicTable.add(backButton).padLeft(0).row();
 
 
 		optionsCell = table.add(optionsTable);

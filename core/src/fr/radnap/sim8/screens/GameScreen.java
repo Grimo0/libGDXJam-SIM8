@@ -181,6 +181,7 @@ public class GameScreen extends AbstractScreen {
 		super.dispose();
 
 		game.assetsFinder.unload("game");
-		stage.dispose();
+		if (stage != null)
+			stage.dispose();
 	}
 }

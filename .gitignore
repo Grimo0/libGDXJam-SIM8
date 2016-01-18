@@ -71,3 +71,4 @@ build/
 *.log
 *.png~
 *.kra-autosave.kra
+*.kra~

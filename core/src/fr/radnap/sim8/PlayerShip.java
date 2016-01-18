@@ -15,7 +15,6 @@ public class PlayerShip implements Ship {
 	private final GameScreen gameScreen;
 	private PilotRoom pilotRoom;
 	private ControlRoom controlRoom;
-	private StoreRoom storeRoom;
 	private Hull hull;
 	private RestRoom restRoom;
 
@@ -26,30 +25,25 @@ public class PlayerShip implements Ship {
 
 		pilotRoom = new PilotRoom(this, atlas, assetManager, 880f, 550f);
 		gameScreen.getStage().addActor(pilotRoom);
-		pilotRoom.setPosition(64f, 60f + 375f + 30f);
+		pilotRoom.setPosition(64f, 60f + 395f + 30f);
 
 		controlRoom = new ControlRoom(this, atlas, assetManager, 880f, 550f);
 		gameScreen.getStage().addActor(controlRoom);
-		controlRoom.setPosition(64f + 880f + 32f, 60f + 375f + 30f);
+		controlRoom.setPosition(64f + 880f + 32f, 60f + 395f + 30f);
 
-		storeRoom = new StoreRoom(this, atlas, assetManager, 600f, 375f);
-		gameScreen.getStage().addActor(storeRoom);
-		storeRoom.setPosition(40f, 60f);
-
-		hull = new Hull(this, atlas, assetManager, 600f, 375f);
+		hull = new Hull(this, atlas, assetManager, 632f, 395f);
 		gameScreen.getStage().addActor(hull);
-		hull.setPosition(40f + 600f + 24f, 60f);
+		hull.setPosition(240f, 60f);
 
-		restRoom = new RestRoom(this, atlas, assetManager, 600f, 375f);
+		restRoom = new RestRoom(this, atlas, assetManager, 632f, 395f);
 		gameScreen.getStage().addActor(restRoom);
-		restRoom.setPosition(40f + 2f * 24f + 2f * 600f, 60f);
+		restRoom.setPosition(2f * 240f + 600f, 60f);
 	}
 
 
 	public void initialize() {
 		pilotRoom.initialize();
 		controlRoom.initialize();
-		storeRoom.initialize();
 		hull.initialize();
 		restRoom.initialize();
 		hull.takeDamages(90);

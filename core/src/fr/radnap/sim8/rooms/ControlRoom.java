@@ -21,6 +21,9 @@ import fr.radnap.sim8.PlayerShip;
  */
 public class ControlRoom extends RepairableRoom {
 
+	private int resources;
+	private Label resourcesLabel;
+
 	private Animation loading;
 
 	private float laserTime;
@@ -31,11 +34,12 @@ public class ControlRoom extends RepairableRoom {
 	private TextureRegionDrawable rocketsLoadingDrawable;
 	private Image rocketsLoading;
 
-	private EnemyShip enemyShip;
-
 
 	public ControlRoom(PlayerShip ship, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
 		super(ship, "ControlRoom", atlas, assetManager, width, height, .5f);
+
+		resources = 85;
+		resourcesLabel = aboveButtons.add("", "number").padRight(10f).right().expandX().getActor();
 
 		Button laser = addActionButton("laser", new ChangeListener() {
 			@Override
@@ -91,6 +95,9 @@ public class ControlRoom extends RepairableRoom {
 	@Override
 	public void act(float delta) {
 		super.act(delta);
+
+		resourcesLabel.setText(String.valueOf(resources) + " r");
+
 		if (laserTime > 0) {
 			laserTime -= delta;
 			if (laserTime < 0) {
@@ -113,6 +120,19 @@ public class ControlRoom extends RepairableRoom {
 		}
 	}
 
+	public int getResources() {
+		return resources;
+	}
+
+	public int use(int amount) {
+		if (resources > amount) {
+			resources -= amount;
+			return amount;
+		}
+		amount = resources;
+		resources = 0;
+		return amount;
+	}
 
 	public void arriveToPlanet() {
 		enable("leave");
@@ -124,8 +144,6 @@ public class ControlRoom extends RepairableRoom {
 
 	public void encounterEnemy(EnemyShip enemyShip) {
 		if (enemyShip == null) return;
-
-		this.enemyShip = enemyShip;
 
 		((Hull) rooms.get("Hull")).seeEnemy(enemyShip);
 

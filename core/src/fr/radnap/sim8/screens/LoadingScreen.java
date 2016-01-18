@@ -77,7 +77,7 @@ public class LoadingScreen extends AbstractScreen {
 		pass = new Label("Clic to start", new Label.LabelStyle(font, new Color(0.9f, 0.9f, 0.85f, 1f)));
 		stage.addActor(pass);
 		pass.setX((stage.getWidth() - pass.getWidth()) / 2f);
-		pass.setY(loadingBar.getY() + 1f * loadingBar.getHeight());
+		pass.setY(loadingBar.getY() + 2f * loadingBar.getHeight());
 	}
 
 	public void setNextScreen(AbstractScreen nextScreen) {
