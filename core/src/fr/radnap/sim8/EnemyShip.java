@@ -136,7 +136,7 @@ public class EnemyShip extends Group implements Ship {
 						playerShip.takeDamages(getLaserDamages());
 						laser.setVisible(false);
 						if (Options.sound)
-							laserTouchedSound.play(.02f);
+							laserTouchedSound.play(.01f);
 					}
 				})
 		));

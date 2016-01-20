@@ -217,7 +217,7 @@ public class Hull extends RepairableRoom {
 						enemy.takeDamages(ship.getLaserDamages());
 						laser.setVisible(false);
 						if (Options.sound)
-							laserTouchedSound.play(.03f);
+							laserTouchedSound.play(.008f);
 					}
 				})
 		));

@@ -1,21 +1,20 @@
 package fr.radnap.sim8.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import fr.radnap.sim8.Options;
 import fr.radnap.sim8.SIM8;
+
+import javax.swing.text.html.Option;
 
 /**
  * @author Radnap
@@ -102,10 +101,13 @@ public class OptionScreen extends AbstractScreen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				TextButton soundButton = (TextButton) actor;
-				if (Options.sound)
+				if (Options.sound) {
 					soundButton.setText("Son : no");
-				else
+					Options.sound = false;
+				} else {
 					soundButton.setText("Son : yes");
+					Options.sound = true;
+				}
 			}
 		});
 		optionsTable.add(soundButton).row();

@@ -20,8 +20,8 @@ import fr.radnap.sim8.screens.*;
 public class SIM8 extends Game {
 
 	public static final String NAME = "SIM8";
-	public static final String VERSION = "0.6.0";
-	public static boolean RELEASE = true;
+	public static final String VERSION = "0.6.1";
+	public static boolean RELEASE = false;
 	public static boolean DEVMODE = false;
 
 	public static Logger logger;

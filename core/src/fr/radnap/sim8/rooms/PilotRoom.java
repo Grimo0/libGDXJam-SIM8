@@ -185,6 +185,10 @@ public class PilotRoom extends Room {
 	public void moveToClosestStar() {
 		if (!canMove) return;
 
+		leaveFor(closestStar());
+	}
+
+	public Star closestStar() {
 		float shortest = Float.MAX_VALUE;
 		Star closest = null;
 		float distanceSq;
@@ -197,16 +201,15 @@ public class PilotRoom extends Room {
 				closest = star;
 			}
 		}
-		leaveFor(closest);
+		return closest;
 	}
 
 	private void leaveFor(final Star star) {
-		if (!canMove) return;
+		if (!canMove || star == currentStar) return;
 
 		if (currentStar.getEnemyShip() != null) {
 			belowButtons.clearChildren();
 			final Label leaveLabel = belowButtons.add("We can't leave while we're attacked.").getActor();
-			belowButtons.row();
 			addAction(sequence(delay(5f, run(new Runnable() {
 				@Override
 				public void run() {
@@ -218,9 +221,9 @@ public class PilotRoom extends Room {
 
 		ControlRoom controlRoom = (ControlRoom) rooms.get("ControlRoom");
 		double distance = Math.sqrt(distanceSq(star));
-		if (!controlRoom.canUse((int) (distance / 20f))) {
+		if (!controlRoom.canUse(controlRoom.costFor(distance))) {
+			belowButtons.clearChildren();
 			final Label leaveLabel = belowButtons.add("We don't have enough resources.").getActor();
-			belowButtons.row();
 			addAction(sequence(delay(5f, run(new Runnable() {
 				@Override
 				public void run() {
@@ -230,7 +233,7 @@ public class PilotRoom extends Room {
 			return;
 		}
 
-		controlRoom.use((int) (distance / 20f));
+		controlRoom.use(controlRoom.costFor(distance));
 
 		travelling = true;
 
@@ -273,15 +276,21 @@ public class PilotRoom extends Room {
 		ControlRoom controlRoom = (ControlRoom) rooms.get("ControlRoom");
 		controlRoom.arriveToPlanet(currentStar);
 		controlRoom.encounterEnemy(star.getEnemyShip());
-		if (hasArrived())
+		if (hasArrived()) {
 			ship.ending();
+			return;
+		}
+
+		Star closestStar = closestStar();
+		if (controlRoom.costFor(Math.sqrt(distanceSq(closestStar))) > controlRoom.getResources() + currentStar.getResources())
+			ship.gameOver("You have no more resources, these planet will be the last you'll ever see.");
 	}
 
 	public boolean hasArrived() {
 		return currentStar.getEnemyShip() == null && currentStar == destination;
 	}
 
-	private float distanceSq(Star star) {
+	protected float distanceSq(Star star) {
 		return (star.getX() + star.getWidth() / 2f - currentStar.getX() - currentStar.getWidth() / 2f) *
 				(star.getX() + star.getWidth() / 2f - currentStar.getX() - currentStar.getWidth() / 2f)
 				+ (star.getY() + star.getHeight() / 2f - currentStar.getY() - currentStar.getHeight() / 2f) *

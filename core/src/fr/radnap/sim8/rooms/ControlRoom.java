@@ -85,7 +85,8 @@ public class ControlRoom extends RepairableRoom {
 				resources += taken;
 				resourcesLabel.setText(resources + " r");
 				resourcesLabel.setColor(Color.WHITE);
-				final Label conso = aboveButtons.add("" + taken, "number").colspan(100).padRight(25f).right().getActor();
+				final Label conso = aboveButtons.add("+" + taken, "number").colspan(100).padRight(25f).right().getActor();
+				conso.setColor(Color.SCARLET);
 				resourcesLabel.addAction(sequence(
 						delay(1f),
 						run(new Runnable() {
@@ -153,15 +154,22 @@ public class ControlRoom extends RepairableRoom {
 		return resources;
 	}
 
+	public int costFor(double distance) {
+		return (int) (distance / 20f);
+	}
+
 	public boolean canUse(int amount) {
 		return amount < resources;
 	}
 
 	public int use(int amount) {
-		if (resources > amount) {
-			resources -= amount;
+		if (resources <= amount) {
+			amount = resources;
+			resources = 0;
 			resourcesLabel.setText(resources + " r");
+			resourcesLabel.setColor(Color.SCARLET);
 			final Label conso = aboveButtons.add("-" + amount, "number").colspan(100).padRight(25f).right().getActor();
+			conso.setColor(Color.SCARLET);
 			resourcesLabel.addAction(sequence(
 					delay(1f),
 					run(new Runnable() {
@@ -171,13 +179,12 @@ public class ControlRoom extends RepairableRoom {
 						}
 					})
 			));
+
 			return amount;
 		}
 
-		amount = resources;
-		resources = 0;
+		resources -= amount;
 		resourcesLabel.setText(resources + " r");
-		resourcesLabel.setColor(Color.SCARLET);
 		final Label conso = aboveButtons.add("-" + amount, "number").colspan(100).padRight(25f).right().getActor();
 		resourcesLabel.addAction(sequence(
 				delay(1f),

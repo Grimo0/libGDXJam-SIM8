@@ -49,4 +49,8 @@ public class Star extends Image {
 	public boolean hasResources() {
 		return resources > 0;
 	}
+
+	public int getResources() {
+		return resources;
+	}
 }
