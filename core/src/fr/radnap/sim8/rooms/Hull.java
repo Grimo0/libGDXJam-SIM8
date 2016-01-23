@@ -70,10 +70,10 @@ public class Hull extends RepairableRoom {
 		laser3.setOrigin(laser3.getWidth() / 2f, laser3.getHeight() / 2f);
 		addActorAfter(shipHull, laser3);
 
-		laserSound = assetManager.get("./sounds/laser2.mp3", Sound.class);
-		laserTouchedSound = assetManager.get("./sounds/laserTouched.mp3", Sound.class);
-		Sound rocketsSound = assetManager.get("./sounds/laser.mp3", Sound.class);
-		Sound rocketsExplodeSound = assetManager.get("./sounds/explosion.mp3", Sound.class);
+		laserSound = assetManager.get("sounds/laser2.mp3", Sound.class);
+		laserTouchedSound = assetManager.get("sounds/laserTouched.mp3", Sound.class);
+		Sound rocketsSound = assetManager.get("sounds/laser.mp3", Sound.class);
+		Sound rocketsExplodeSound = assetManager.get("sounds/explosion.mp3", Sound.class);
 
 		Animation explosionAnimation = new Animation(.1f, atlas.findRegions("explosion"));
 		TextureRegion rocketRegion = atlas.findRegion("rocket");
@@ -90,7 +90,7 @@ public class Hull extends RepairableRoom {
 		travel.setPosition((width - travel.getWidth()) / 2f, (height - travel.getHeight()) / 2f);
 		addActorBefore(aboveButtons, travel);
 
-		travelSound = assetManager.get("./sounds/warpout.mp3");
+		travelSound = assetManager.get("sounds/warpout.mp3");
 	}
 
 

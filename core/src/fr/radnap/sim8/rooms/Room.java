@@ -55,7 +55,7 @@ public abstract class Room extends Table {
 		setBackground(backgroundDrawable);
 		setClip(true);
 
-		buttonSound = assetManager.get("./sounds/click.wav");
+		buttonSound = assetManager.get("sounds/click.wav");
 
 		buttonSoundClickListener = new ClickListener() {
 			@Override
@@ -112,9 +112,6 @@ public abstract class Room extends Table {
 	}
 
 	public void disableRoom() {
-//		for (ObjectMap.Entry<String, Button> button : buttons) {
-//			button.value.setDisabled(true);
-//		}
 		disabled.setVisible(true);
 	}
 

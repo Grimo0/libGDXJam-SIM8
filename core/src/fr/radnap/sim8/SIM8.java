@@ -20,7 +20,7 @@ import fr.radnap.sim8.screens.*;
 public class SIM8 extends Game {
 
 	public static final String NAME = "SIM8";
-	public static final String VERSION = "0.6.1";
+	public static final String VERSION = "0.6.2";
 	public static boolean RELEASE = false;
 	public static boolean DEVMODE = false;
 
@@ -74,13 +74,14 @@ public class SIM8 extends Game {
 		assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
 		assetManager.setLoader(TiledMap.class, new TmxMapLoader(resolver));
 
-		assetsFinder.load(".");
+		assetManager.load("freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
+		assetManager.load("freetype/8bitlim.ttf", FreeTypeFontGenerator.class);
 		assetManager.finishLoading();
 
-		titleGen = assetManager.get("./freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
-		title2Gen = assetManager.get("./freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
-		commonGen = assetManager.get("./freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
-		numberGen = assetManager.get("./freetype/8bitlim.ttf", FreeTypeFontGenerator.class);
+		titleGen = assetManager.get("freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
+		title2Gen = assetManager.get("freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
+		commonGen = assetManager.get("freetype/5x5_square.ttf", FreeTypeFontGenerator.class);
+		numberGen = assetManager.get("freetype/8bitlim.ttf", FreeTypeFontGenerator.class);
 
 		mainMenuScreen = new MainMenuScreen(this);
 		optionScreen = new OptionScreen(this);

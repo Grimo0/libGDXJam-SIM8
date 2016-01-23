@@ -166,26 +166,13 @@ public class ControlRoom extends RepairableRoom {
 		if (resources <= amount) {
 			amount = resources;
 			resources = 0;
-			resourcesLabel.setText(resources + " r");
 			resourcesLabel.setColor(Color.SCARLET);
-			final Label conso = aboveButtons.add("-" + amount, "number").colspan(100).padRight(25f).right().getActor();
-			conso.setColor(Color.SCARLET);
-			resourcesLabel.addAction(sequence(
-					delay(1f),
-					run(new Runnable() {
-						@Override
-						public void run() {
-							conso.remove();
-						}
-					})
-			));
+		} else
+			resources -= amount;
 
-			return amount;
-		}
-
-		resources -= amount;
 		resourcesLabel.setText(resources + " r");
 		final Label conso = aboveButtons.add("-" + amount, "number").colspan(100).padRight(25f).right().getActor();
+		conso.setColor(Color.SCARLET);
 		resourcesLabel.addAction(sequence(
 				delay(1f),
 				run(new Runnable() {

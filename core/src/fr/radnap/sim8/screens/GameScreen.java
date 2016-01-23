@@ -1,6 +1,7 @@
 package fr.radnap.sim8.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -45,7 +46,15 @@ public class GameScreen extends AbstractScreen {
 	@Override
 	public void loadAssets() {
 		super.loadAssets();
-		game.assetsFinder.load("game");
+		game.assetManager.load("game/gamePack.atlas", TextureAtlas.class);
+
+		game.assetManager.load("sounds/click.wav", Sound.class);
+		game.assetManager.load("sounds/explosion.mp3", Sound.class);
+		game.assetManager.load("sounds/laser.mp3", Sound.class);
+		game.assetManager.load("sounds/laser2.mp3", Sound.class);
+		game.assetManager.load("sounds/laserTouched.mp3", Sound.class);
+		game.assetManager.load("sounds/travel.mp3", Sound.class);
+		game.assetManager.load("sounds/warpout.mp3", Sound.class);
 	}
 
 	@Override

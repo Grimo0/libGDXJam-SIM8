@@ -39,7 +39,6 @@ public class OptionScreen extends AbstractScreen {
 			return;
 
 		super.loadAssets();
-		game.assetsFinder.load("mainMenu");
 	}
 
 	@Override

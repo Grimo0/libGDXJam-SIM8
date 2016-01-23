@@ -41,7 +41,7 @@ public class LoadingScreen extends AbstractScreen {
 		stage = new Stage(viewport, game.batch);
 
 		// Tell the assetManager to load assets for the loading screen
-		game.assetsFinder.load("loading");
+		game.assetManager.load("loading/loadingPack.atlas", TextureAtlas.class);
 		// Wait until they are finished loading
 		game.assetManager.finishLoading();
 

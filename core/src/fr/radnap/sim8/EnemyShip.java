@@ -58,8 +58,8 @@ public class EnemyShip extends Group implements Ship {
 		laser3.setOrigin(laser3.getWidth() / 2f, laser3.getHeight() / 2f);
 		addActorAfter(ship, laser3);
 
-		laserSound = assetManager.get("./sounds/laser2.mp3", Sound.class);
-		laserTouchedSound = assetManager.get("./sounds/laserTouched.mp3", Sound.class);
+		laserSound = assetManager.get("sounds/laser2.mp3", Sound.class);
+		laserTouchedSound = assetManager.get("sounds/laserTouched.mp3", Sound.class);
 	}
 
 

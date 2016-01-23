@@ -59,7 +59,7 @@ public class MainMenuScreen extends AbstractScreen {
 			return;
 
 		super.loadAssets();
-		game.assetsFinder.load("mainMenu");
+		game.assetManager.load("mainMenu/mainMenuPack.atlas", TextureAtlas.class);
 
 		game.optionScreen.loadAssets();
 	}
