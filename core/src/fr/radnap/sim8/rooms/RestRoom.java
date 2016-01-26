@@ -54,19 +54,23 @@ public class RestRoom extends Room {
 
 		stressLevel = 1;
 
-		okAnimation = new Animation(.1f, atlas.findRegions("ekgOk"), Animation.PlayMode.LOOP);
-		cautionAnimation = new Animation(.1f, atlas.findRegions("ekgCaution"), Animation.PlayMode.LOOP);
-		dangerAnimation = new Animation(.1f, atlas.findRegions("ekgDanger"), Animation.PlayMode.LOOP);
+		okAnimation = new Animation(.1f, atlas.findRegions("restRoom/ekgOk"), Animation.PlayMode.LOOP);
+		cautionAnimation = new Animation(.1f, atlas.findRegions("restRoom/ekgCaution"), Animation.PlayMode.LOOP);
+		dangerAnimation = new Animation(.1f, atlas.findRegions("restRoom/ekgDanger"), Animation.PlayMode.LOOP);
 
 		ekgDrawable = new TextureRegionDrawable(okAnimation.getKeyFrame(0f));
 		ekg = new Image(ekgDrawable);
-		aboveButtons.add(ekg).width(4f*ekg.getPrefWidth()).height(4f*ekg.getPrefHeight()).pad(5f).left();
+		belowButtons.top().left();
+		belowButtons.add(ekg).width(4f*ekg.getPrefWidth()).height(4f*ekg.getPrefHeight()).pad(5f).left();
 	}
 
 
 	@Override
 	public void initialize() {
-		currentAnimation = okAnimation;
+		super.initialize();
+		if(stressLevel > 8) currentAnimation = dangerAnimation;
+		else if (stressLevel > 4) currentAnimation = cautionAnimation;
+		else currentAnimation = okAnimation;
 	}
 
 	@Override

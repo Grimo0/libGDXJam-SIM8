@@ -111,6 +111,24 @@ public class OptionScreen extends AbstractScreen {
 		});
 		optionsTable.add(soundButton).row();
 
+		TextButton tutorialButton = new TextButton("Tutorial : yes", skin);
+		if (!Options.tutorial)
+			tutorialButton.setText("Tutorial: no");
+		tutorialButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				TextButton tutorialButton = (TextButton) actor;
+				if (Options.tutorial) {
+					tutorialButton.setText("Tutorial : no");
+					Options.tutorial = false;
+				} else {
+					tutorialButton.setText("Tutorial : yes");
+					Options.tutorial = true;
+				}
+			}
+		});
+		optionsTable.add(tutorialButton).row();
+
 		TextButton graphicButton = new TextButton("Resolution", skin);
 		graphicButton.addListener(new ChangeListener() {
 			@Override
@@ -227,7 +245,6 @@ public class OptionScreen extends AbstractScreen {
 	public void dispose() {
 		super.dispose();
 
-		game.assetsFinder.unload("mainMenu");
 		if (stage != null) {
 			stage.dispose();
 			stage = null;

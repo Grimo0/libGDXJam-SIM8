@@ -2,17 +2,18 @@ package fr.radnap.sim8.rooms;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
@@ -29,15 +30,16 @@ public abstract class Room extends Table {
 	protected static ObjectMap<String, Room> rooms = new ObjectMap<>();
 
 	protected final TextureAtlas atlas;
+	protected boolean disabled;
 
 	private Animation backgroundAnimation;
 	private TextureRegionDrawable backgroundDrawable;
 	protected float stateTime;
-	private Image disabled;
+	private Image disabledOverlay;
 
+	protected ObjectMap<String, Button> buttons;
 	protected Sound buttonSound;
 	protected ClickListener buttonSoundClickListener;
-	protected ObjectMap<String, Button> buttons;
 	protected Table buttonsTable;
 	protected Table aboveButtons;
 	protected Table belowButtons;
@@ -46,8 +48,11 @@ public abstract class Room extends Table {
 	public Room(PlayerShip ship, String name, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
 		this.ship = ship;
 		rooms.put(name, this);
-		setName(name);
+
 		this.atlas = atlas;
+		disabled = false;
+
+		setName(name);
 		setSize(width, height);
 
 		backgroundAnimation = new Animation(0.4f, atlas.findRegions(name));
@@ -72,51 +77,60 @@ public abstract class Room extends Table {
 		buttonsTable.center().bottom();
 		buttonsTable.defaults().space(25f);
 		addActor(buttonsTable);//.expandX();//.height(96);
-//		row();
 
-		disabled = new Image(atlas.findRegion("disabledRoom"));
-		disabled.setVisible(false);
-		disabled.setSize(width, height);
-		addActor(disabled);
+		belowButtons = new Table(GameScreen.skin);
+		belowButtons.top().left();
+		belowButtons.setSize(width - 9f, height - 9f);
+		belowButtons.setPosition(5f, height - 5f - belowButtons.getHeight());
+		addActor(belowButtons);
+
+		disabledOverlay = new Image(atlas.findRegion("disabledRoom"));
+		disabledOverlay.setVisible(false);
+		disabledOverlay.setSize(width, height);
+		addActor(disabledOverlay);
 
 		aboveButtons = new Table(GameScreen.skin);
 		aboveButtons.top().left();
-		add(aboveButtons).pad(4f, 5f, 4f, 5f).top().left().expand().width(width - 9f);//.height((height - 116f) * .5f);
-		row();
+		aboveButtons.setSize(width - 9f, (height - 116f) * .5f);
+		aboveButtons.setPosition(5f, height - 5f - aboveButtons.getHeight());
+		addActor(aboveButtons);
 
-		Image roomFrame = new Image(atlas.createPatch("roomFrame"));
+		NinePatch roomFrame1 = atlas.createPatch("roomFrame");
+		Image roomFrame = new Image(roomFrame1);
 		roomFrame.setTouchable(Touchable.disabled);
+		roomFrame.setSize(width, height);
+		roomFrame.setPosition(0f, 0f);
 		addActor(roomFrame);
-		roomFrame.setSize(width + 1, height + 1);
-
-		belowButtons = new Table(GameScreen.skin);
-		belowButtons.setBackground(new NinePatchDrawable(atlas.createPatch("glassPanel")));
-		belowButtons.top().left().pad(10f, 7f, 10f, 7f);
-		belowButtons.defaults().left().space(5f);
-		add(belowButtons).pad(10f, 0f, 0f, 0f).bottom().left().width(width + 1).height(71f);
-		row();
 
 		validate();
 
-		buttonsTable.setY(belowButtons.getY() + belowButtons.getHeight() + belowButtons.getPadTop());
+		buttonsTable.setY(50f);
 	}
 
 
-	public abstract void initialize();
+	public void initialize() {
+		Label actor = new Label(getName(), GameScreen.skin);
+		actor.setPosition(getX() + 10f, getY() + getHeight());
+		getStage().addActor(actor);
+	}
 
 	@Override
 	public void act(float delta) {
+		if (disabled) return;
+
 		super.act(delta);
 		stateTime += delta;
 		backgroundDrawable.setRegion(backgroundAnimation.getKeyFrame(stateTime, true));
 	}
 
 	public void disableRoom() {
-		disabled.setVisible(true);
+		disabledOverlay.setVisible(true);
+		disabled = true;
 	}
 
 	public void enableRoom() {
-		disabled.setVisible(false);
+		disabledOverlay.setVisible(false);
+		disabled = false;
 	}
 
 	protected Button addActionButton(String action, ChangeListener changeListener) {

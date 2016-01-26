@@ -40,20 +40,20 @@ public class EnemyShip extends Group implements Ship {
 		fireRate = .3f * ((enemyType - 1) % 4) + 1f;
 		stateTime = 0f;
 
-		ship = new Image(atlas.findRegion("enemy", enemyType));
+		ship = new Image(atlas.findRegion("hull/enemy", enemyType));
 		addActor(ship);
 		ship.setPosition(.5f, 1f);
 		setSize(ship.getWidth(), ship.getHeight());
 
-		laser1 = new Image(atlas.findRegion("laser"));
+		laser1 = new Image(atlas.findRegion("hull/laser"));
 		laser1.setVisible(false);
 		laser1.setOrigin(laser1.getWidth() / 2f, laser1.getHeight() / 2f);
 		addActorAfter(ship, laser1);
-		laser2 = new Image(atlas.findRegion("laser"));
+		laser2 = new Image(atlas.findRegion("hull/laser"));
 		laser2.setVisible(false);
 		laser2.setOrigin(laser2.getWidth() / 2f, laser2.getHeight() / 2f);
 		addActorAfter(ship, laser2);
-		laser3 = new Image(atlas.findRegion("laser"));
+		laser3 = new Image(atlas.findRegion("hull/laser"));
 		laser3.setVisible(false);
 		laser3.setOrigin(laser3.getWidth() / 2f, laser3.getHeight() / 2f);
 		addActorAfter(ship, laser3);

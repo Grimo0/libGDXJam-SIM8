@@ -50,12 +50,13 @@ public abstract class RepairableRoom extends Room {
 			}
 		});
 		repairButton.addListener(buttonSoundClickListener);
+		buttons.put("repair", repairButton);
 
 		aboveButtons.add(repairButton).pad(5f).left();
 	}
 
 
-	public float getStatus() {
+	public int getStatus() {
 		return status;
 	}
 

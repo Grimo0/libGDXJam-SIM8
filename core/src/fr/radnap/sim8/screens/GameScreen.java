@@ -106,6 +106,7 @@ public class GameScreen extends AbstractScreen {
 		stage.addActor(overlay);
 	}
 
+
 	@Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
@@ -201,7 +202,15 @@ public class GameScreen extends AbstractScreen {
 	public void dispose() {
 		super.dispose();
 
-		game.assetsFinder.unload("game");
+		game.assetManager.unload("game/gamePack.atlas");
+
+		game.assetManager.unload("sounds/click.wav");
+		game.assetManager.unload("sounds/explosion.mp3");
+		game.assetManager.unload("sounds/laser.mp3");
+		game.assetManager.unload("sounds/laser2.mp3");
+		game.assetManager.unload("sounds/laserTouched.mp3");
+		game.assetManager.unload("sounds/travel.mp3");
+		game.assetManager.unload("sounds/warpout.mp3");
 		if (stage != null)
 			stage.dispose();
 	}

@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import fr.radnap.sim8.EnemyShip;
+import fr.radnap.sim8.Options;
 import fr.radnap.sim8.PlayerShip;
 import fr.radnap.sim8.Star;
 
@@ -54,17 +55,17 @@ public class PilotRoom extends Room {
 		super(ship, "PilotRoom", atlas, assetManager, width, height);
 		travelling = false;
 
-		canMove = false;
+		canMove = true;
 		map = new Group();
-		addActorBefore(aboveButtons, map);
+		addActorBefore(belowButtons, map);
 
-		Image nebula = new Image(atlas.findRegion("nebula"));
+		Image nebula = new Image(atlas.findRegion("pilotRoom/nebula"));
 		map.addActor(nebula);
 		map.setSize(nebula.getPrefWidth(), nebula.getPrefHeight());
 
-		destinationDrawable = new TextureRegionDrawable(atlas.findRegion("destination"));
-		starDrawable = new TextureRegionDrawable(atlas.findRegion("star"));
-		starVisitedDrawable = new TextureRegionDrawable(atlas.findRegion("starVisited"));
+		destinationDrawable = new TextureRegionDrawable(atlas.findRegion("pilotRoom/destination"));
+		starDrawable = new TextureRegionDrawable(atlas.findRegion("pilotRoom/star"));
+		starVisitedDrawable = new TextureRegionDrawable(atlas.findRegion("pilotRoom/starVisited"));
 
 		colors = new Color[5];
 		colors[0] = Color.WHITE;
@@ -78,7 +79,7 @@ public class PilotRoom extends Room {
 		sizes[1] = 1f;
 		sizes[2] = 1.3f;
 
-		reachable = new Image(atlas.findRegion("reachable"));
+		reachable = new Image(atlas.findRegion("pilotRoom/reachable"));
 		reachable.setSize(reachable.getWidth() * .9f, reachable.getHeight() * .9f);
 		reachable.setOrigin(reachable.getWidth() / 2f, reachable.getHeight() / 2f);
 		map.addActor(reachable);
@@ -87,7 +88,7 @@ public class PilotRoom extends Room {
 		currentStar = stars.get(0);
 		currentStar.setEnemyShip(null);
 
-		currentAnimation = new Animation(0.2f, atlas.findRegions("currentPosition"));
+		currentAnimation = new Animation(0.2f, atlas.findRegions("pilotRoom/currentPosition"));
 		currentDrawable = new TextureRegionDrawable(currentAnimation.getKeyFrame(0));
 		current = new Image(currentDrawable);
 		current.setPosition((currentStar.getX() + (currentStar.getWidth() - current.getWidth()) / 2f), currentStar.getY() + currentStar.getHeight());
@@ -96,19 +97,25 @@ public class PilotRoom extends Room {
 		map.addActor(current);
 
 		// TUTORIAL
-		map.addAction(sequence(
-				delay(.5f),
-				moveTo(Math.max(getWidth() - map.getWidth(), getWidth() / 2f - destination.getX()),
-						Math.max(getHeight() - map.getHeight(), getHeight() / 2f - destination.getY()), 2f),
-				delay(2f),
-				moveTo(0, 0, 3f),
-				run(new Runnable() {
-					@Override
-					public void run() {
-						canMove = true;
-					}
-				})
-		));
+		if (Options.tutorial) {
+			canMove = false;
+			map.addAction(sequence(
+					delay(.5f),
+					moveTo(Math.max(getWidth() - map.getWidth(), getWidth() / 2f - destination.getX()),
+							Math.max(getHeight() - map.getHeight(), getHeight() / 2f - destination.getY()), 2f),
+					delay(2f),
+					moveTo(0, 0, 3f),
+					run(new Runnable() {
+						@Override
+						public void run() {
+							canMove = true;
+							rooms.get("ControlRoom").enableRoom();
+							rooms.get("Hull").enableRoom();
+							rooms.get("RestRoom").enableRoom();
+						}
+					})
+			));
+		}
 		belowButtons.add("You need to reach the destination").row();
 		belowButtons.add("with the crew alive.").row();
 	}
@@ -116,6 +123,12 @@ public class PilotRoom extends Room {
 
 	@Override
 	public void initialize() {
+		super.initialize();
+		if (Options.tutorial) {
+			rooms.get("ControlRoom").disableRoom();
+			rooms.get("Hull").disableRoom();
+			rooms.get("RestRoom").disableRoom();
+		}
 		arriveTo(currentStar);
 	}
 
@@ -171,7 +184,6 @@ public class PilotRoom extends Room {
 						leaveFor(star);
 				}
 			});
-			star.addListener(buttonSoundClickListener);
 			map.addActor(star);
 			stars.add(star);
 
@@ -180,12 +192,6 @@ public class PilotRoom extends Room {
 		destination = star;
 		assert destination != null;
 		destination.setDrawable(destinationDrawable);
-	}
-
-	public void moveToClosestStar() {
-		if (!canMove) return;
-
-		leaveFor(closestStar());
 	}
 
 	public Star closestStar() {

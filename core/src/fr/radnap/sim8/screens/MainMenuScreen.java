@@ -267,7 +267,7 @@ public class MainMenuScreen extends AbstractScreen {
 	public void dispose() {
 		super.dispose();
 
-		game.assetsFinder.unload("mainMenu");
+		game.assetManager.unload("mainMenu/mainMenuPack.atlas");
 		if (stage != null) {
 			stage.dispose();
 			stage = null;

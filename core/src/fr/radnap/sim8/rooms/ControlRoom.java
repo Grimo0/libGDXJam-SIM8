@@ -12,7 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.ObjectMap;
 import fr.radnap.sim8.EnemyShip;
 import fr.radnap.sim8.PlayerShip;
 import fr.radnap.sim8.Star;
@@ -43,7 +45,8 @@ public class ControlRoom extends RepairableRoom {
 		super(ship, "ControlRoom", atlas, assetManager, width, height, .5f);
 
 		resources = 85;
-		resourcesLabel = aboveButtons.add(resources + " r", "number").padRight(10f).right().expandX().getActor();
+		resourcesLabel = aboveButtons.add(resources + "r", "number").padRight(10f).right().expandX().getActor();
+		aboveButtons.row();
 
 		Button laser = addActionButton("laser", new ChangeListener() {
 			@Override
@@ -67,13 +70,6 @@ public class ControlRoom extends RepairableRoom {
 			}
 		}, null);
 
-//		addActionButton("leave", new ChangeListener() {
-//			@Override
-//			public void changed(ChangeEvent event, Actor actor) {
-//				((PilotRoom) rooms.get("PilotRoom")).moveToClosestStar();
-//			}
-//		});
-
 		addActionButton("harvest", new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -82,20 +78,8 @@ public class ControlRoom extends RepairableRoom {
 				int taken = currentStar.takeResources();
 				if (taken == 0) return;
 
-				resources += taken;
-				resourcesLabel.setText(resources + " r");
-				resourcesLabel.setColor(Color.WHITE);
-				final Label conso = aboveButtons.add("+" + taken, "number").colspan(100).padRight(25f).right().getActor();
-				conso.setColor(Color.SCARLET);
-				resourcesLabel.addAction(sequence(
-						delay(1f),
-						run(new Runnable() {
-							@Override
-							public void run() {
-								conso.remove();
-							}
-						})
-				));
+				recolt(taken);
+
 				if (!currentStar.hasResources())
 					disable("harvest");
 			}
@@ -116,12 +100,16 @@ public class ControlRoom extends RepairableRoom {
 		rocketsLoading.setTouchable(Touchable.disabled);
 		rocketsLoading.setPosition(buttonsTable.getX() + rockets.getX(), buttonsTable.getY() + rockets.getY());
 		addActorAfter(buttonsTable, rocketsLoading);
+
+		belowButtons.setBackground(new NinePatchDrawable(atlas.createPatch("glassPanel")));
+		belowButtons.top().left().pad(10f, 7f, 10f, 7f);
+		belowButtons.defaults().left().space(5f);
+		belowButtons.setSize(width - 9f, 71f);
+		belowButtons.setPosition(5f, 5f);
+
+		buttonsTable.setY(belowButtons.getY() + belowButtons.getHeight() + belowButtons.getPadTop());
 	}
 
-
-	@Override
-	public void initialize() {
-	}
 
 	@Override
 	public void act(float delta) {
@@ -167,10 +155,12 @@ public class ControlRoom extends RepairableRoom {
 			amount = resources;
 			resources = 0;
 			resourcesLabel.setColor(Color.SCARLET);
-		} else
+		} else {
 			resources -= amount;
+			resourcesLabel.setColor(Color.WHITE);
+		}
 
-		resourcesLabel.setText(resources + " r");
+		resourcesLabel.setText(resources + "r");
 		final Label conso = aboveButtons.add("-" + amount, "number").colspan(100).padRight(25f).right().getActor();
 		conso.setColor(Color.SCARLET);
 		resourcesLabel.addAction(sequence(
@@ -184,6 +174,24 @@ public class ControlRoom extends RepairableRoom {
 		));
 
 		return amount;
+	}
+
+	public void recolt(int amount) {
+		resources += amount;
+		resourcesLabel.setColor(Color.WHITE);
+
+		resourcesLabel.setText(resources + "r");
+		final Label conso = aboveButtons.add("+" + amount, "number").colspan(100).padRight(25f).right().getActor();
+		conso.setColor(Color.SCARLET);
+		resourcesLabel.addAction(sequence(
+				delay(1f),
+				run(new Runnable() {
+					@Override
+					public void run() {
+						conso.remove();
+					}
+				})
+		));
 	}
 
 	public void arriveToPlanet(Star star) {

@@ -42,30 +42,30 @@ public class Hull extends RepairableRoom {
 	public Hull(PlayerShip ship, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
 		super(ship, "Hull", atlas, assetManager, width, height, .5f);
 
-		stars = new Image(atlas.findRegion("stars"));
+		stars = new Image(atlas.findRegion("hull/stars"));
 		stars.setSize(2 * width * stars.getWidth() / stars.getHeight(), 2 * width);
 		stars.setOrigin(stars.getWidth() / 2f, stars.getHeight() / 2f);
 		stars.setPosition(width - stars.getWidth() / 2f, (height - stars.getHeight()) / 2f);
-		addActorBefore(aboveButtons, stars);
+		addActorBefore(belowButtons, stars);
 
 		planetDrawable = new TextureRegionDrawable();
 		planet = new Image();
-		addActorBefore(aboveButtons, planet);
+		addActorAfter(stars, planet);
 
-		shipHull = new Image(atlas.findRegion("blueship"));
+		shipHull = new Image(atlas.findRegion("hull/blueship"));
 		shipHull.setName("PlayerShipHull");
 		shipHull.setPosition(5f, (height - shipHull.getHeight()) / 2f + 2f);
-		addActorBefore(aboveButtons, shipHull);
+		addActorAfter(planet, shipHull);
 
-		laser1 = new Image(atlas.findRegion("laser"));
+		laser1 = new Image(atlas.findRegion("hull/laser"));
 		laser1.setVisible(false);
 		laser1.setOrigin(laser1.getWidth() / 2f, laser1.getHeight() / 2f);
 		addActorAfter(shipHull, laser1);
-		laser2 = new Image(atlas.findRegion("laser"));
+		laser2 = new Image(atlas.findRegion("hull/laser"));
 		laser2.setVisible(false);
 		laser2.setOrigin(laser2.getWidth() / 2f, laser2.getHeight() / 2f);
 		addActorAfter(shipHull, laser2);
-		laser3 = new Image(atlas.findRegion("laser"));
+		laser3 = new Image(atlas.findRegion("hull/laser"));
 		laser3.setVisible(false);
 		laser3.setOrigin(laser3.getWidth() / 2f, laser3.getHeight() / 2f);
 		addActorAfter(shipHull, laser3);
@@ -75,8 +75,8 @@ public class Hull extends RepairableRoom {
 		Sound rocketsSound = assetManager.get("sounds/laser.mp3", Sound.class);
 		Sound rocketsExplodeSound = assetManager.get("sounds/explosion.mp3", Sound.class);
 
-		Animation explosionAnimation = new Animation(.1f, atlas.findRegions("explosion"));
-		TextureRegion rocketRegion = atlas.findRegion("rocket");
+		Animation explosionAnimation = new Animation(.1f, atlas.findRegions("hull/explosion"));
+		TextureRegion rocketRegion = atlas.findRegion("hull/rocket");
 		rocket1 = new Rocket(rocketRegion, enemy, explosionAnimation, rocketsSound, rocketsExplodeSound);
 		rocket1.setOrigin(rocket1.getWidth() / 2f, rocket1.getHeight() / 2f);
 		addActorAfter(shipHull, rocket1);
@@ -84,27 +84,28 @@ public class Hull extends RepairableRoom {
 		rocket2.setOrigin(rocket2.getWidth() / 2f, rocket2.getHeight() / 2f);
 		addActorAfter(shipHull, rocket2);
 
-		travel = new Image(atlas.findRegion("travel"));
+		travel = new Image(atlas.findRegion("hull/travel"));
 		travel.setVisible(false);
 		travel.setSize(width, width * travel.getHeight() / travel.getWidth());
 		travel.setPosition((width - travel.getWidth()) / 2f, (height - travel.getHeight()) / 2f);
-		addActorBefore(aboveButtons, travel);
+		addActorBefore(belowButtons, travel);
 
 		travelSound = assetManager.get("sounds/warpout.mp3");
 	}
 
 
 	@Override
-	public void initialize() {
-	}
-
-	@Override
 	public void disableRoom() {
-		ship.gameOver("The ship is wrecked.");
+		if (getStatus() <= 0)
+			ship.gameOver("The ship is wrecked.");
+		else
+			super.disableRoom();
 	}
 
 	@Override
 	public void act(float delta) {
+		if (disabled) return;
+
 		super.act(delta);
 		stars.rotateBy(-0.25f * delta);
 		planet.rotateBy(.75f * delta);
