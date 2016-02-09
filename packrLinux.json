@@ -3,15 +3,14 @@
     "jdk": "openjdk-1.7.0-u80-unofficial-linux-i586-image.zip",
     "executable": "SIM8",
     "classpath": [
-        "LD34/desktop/build/libs/desktop-1.0.jar"
+        "[libGDX Jam] SIM8/desktop/build/libs/desktop-1.0.jar"
     ],
-    "mainclass": "fr.radnap.ld34.desktop.DesktopLauncher",
+    "mainclass": "fr.radnap.sim8.desktop.DesktopLauncher",
     "vmargs": [
        "-Xmx1G"
     ],
     "resources": [
-        "LD34/android/assets/"
     ],
     "minimizejre": "hard",
-    "outdir": "LD34/build/linux32"
+    "outdir": "[libGDX Jam] SIM8/build/linux32"
 }

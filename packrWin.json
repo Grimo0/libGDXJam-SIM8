@@ -6,9 +6,10 @@
         "[libGDX Jam] SIM8/desktop/build/libs/desktop-1.0.jar"
     ],
     "mainclass": "fr.radnap.sim8.desktop.DesktopLauncher",
-    "vmargs": ["-Xmx1G"],
+    "vmargs": [
+       "-Xmx1G"
+    ],
     "resources": [
-        "[libGDX Jam] SIM8/android/assets/"
     ],
     "minimizejre": "hard",
     "outdir": "[libGDX Jam] SIM8/build/win32"

@@ -93,12 +93,6 @@ public class MainMenuScreen extends AbstractScreen {
 		fontParams.shadowOffsetX = 3;
 		fontParams.shadowOffsetY = 3;
 
-		Label.LabelStyle labelStyle = new Label.LabelStyle();
-		fontParams.size = (int) (0.2f * SCREEN_HEIGHT);
-		labelStyle.font = SIM8.titleGen.generateFont(fontParams);
-		labelStyle.fontColor = new Color(1f, 42f / 255f, 0f, 1f);
-		skin.add("title", labelStyle);
-
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 		fontParams.size = 80;
 		fontParams.shadowColor = new Color(.1f, 0f, 0f, 0.4f);
@@ -107,7 +101,7 @@ public class MainMenuScreen extends AbstractScreen {
 		textButtonStyle.fontColor = Color.GRAY;
 		skin.add("default", textButtonStyle);
 
-		labelStyle = new Label.LabelStyle();
+		Label.LabelStyle labelStyle = new Label.LabelStyle();
 		fontParams.size = 30;
 		fontParams.shadowOffsetX = 1;
 		fontParams.shadowOffsetY = 1;

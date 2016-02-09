@@ -202,6 +202,9 @@ public class GameScreen extends AbstractScreen {
 	public void dispose() {
 		super.dispose();
 
+		if (stage == null)
+			return;
+
 		game.assetManager.unload("game/gamePack.atlas");
 
 		game.assetManager.unload("sounds/click.wav");

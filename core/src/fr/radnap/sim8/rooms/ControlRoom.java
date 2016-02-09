@@ -28,11 +28,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 public class ControlRoom extends RepairableRoom {
 
 	private Color warningColor;
-<<<<<<< HEAD
 	private final Label resourcesChangeLabel;
-=======
-	private final Label conso;
->>>>>>> origin/master
 	private int resources;
 	private Label resourcesLabel;
 
@@ -56,15 +52,9 @@ public class ControlRoom extends RepairableRoom {
 		resources = 85;
 		resourcesLabel = aboveButtons.add(resources + "r", "number").padRight(10f).right().expandX().getActor();
 		aboveButtons.row();
-<<<<<<< HEAD
 		resourcesChangeLabel = aboveButtons.add("", "number").space(1f).colspan(100).padRight(25f).right().getActor();
 		resourcesChangeLabel.setColor(Color.SCARLET);
 		resourcesChangeLabel.getColor().a = 0f;
-=======
-		conso = aboveButtons.add("", "number").space(1f).colspan(100).padRight(25f).right().getActor();
-		conso.setColor(Color.SCARLET);
-		conso.getColor().a = 0f;
->>>>>>> origin/master
 		aboveButtons.row();
 
 		Button laser = addActionButton("laser", new ChangeListener() {
@@ -192,30 +182,19 @@ public class ControlRoom extends RepairableRoom {
 		}
 
 		resourcesLabel.setText(resources + "r");
-<<<<<<< HEAD
 		resourcesChangeLabel.setColor(Color.SCARLET);
 		resourcesChangeLabel.getColor().a = 0f;
 		resourcesChangeLabel.setText("-" + amount);
 		resourcesChangeLabel.clearActions();
 		resourcesChangeLabel.addAction(sequence(
-=======
-		conso.setText("-" + amount);
-		conso.clearActions();
-		conso.addAction(sequence(
->>>>>>> origin/master
 				parallel(fadeIn(.1f), Actions.moveBy(0, 3f, .1f)),
 				Actions.moveBy(0, -3f, .1f),
 				delay(1f),
 				run(new Runnable() {
 					@Override
 					public void run() {
-<<<<<<< HEAD
 						resourcesChangeLabel.setText("");
 						resourcesChangeLabel.getColor().a = 0f;
-=======
-						conso.setText("");
-						conso.getColor().a = 0f;
->>>>>>> origin/master
 					}
 				})
 		));
@@ -228,30 +207,19 @@ public class ControlRoom extends RepairableRoom {
 		resourcesLabel.setColor(Color.WHITE);
 
 		resourcesLabel.setText(resources + "r");
-<<<<<<< HEAD
 		resourcesChangeLabel.setColor(Color.CHARTREUSE);
 		resourcesChangeLabel.getColor().a = 0f;
 		resourcesChangeLabel.setText("+" + amount);
 		resourcesChangeLabel.clearActions();
 		resourcesChangeLabel.addAction(sequence(
-=======
-		conso.setText("-" + amount);
-		conso.clearActions();
-		conso.addAction(sequence(
->>>>>>> origin/master
 				parallel(fadeIn(.1f), Actions.moveBy(0, 3f, .1f)),
 				Actions.moveBy(0, -3f, .1f),
 				delay(1f),
 				run(new Runnable() {
 					@Override
 					public void run() {
-<<<<<<< HEAD
 						resourcesChangeLabel.setText("");
 						resourcesChangeLabel.getColor().a = 0f;
-=======
-						conso.setText("");
-						conso.getColor().a = 0f;
->>>>>>> origin/master
 					}
 				})
 		));
