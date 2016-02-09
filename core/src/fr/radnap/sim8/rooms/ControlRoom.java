@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -14,18 +15,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.ObjectMap;
 import fr.radnap.sim8.EnemyShip;
 import fr.radnap.sim8.PlayerShip;
 import fr.radnap.sim8.Star;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
 /**
  * @author Radnap
  */
 public class ControlRoom extends RepairableRoom {
 
+	private Color warningColor;
+	private final Label resourcesChangeLabel;
 	private int resources;
 	private Label resourcesLabel;
 
@@ -41,11 +44,17 @@ public class ControlRoom extends RepairableRoom {
 	private Star currentStar;
 
 
-	public ControlRoom(PlayerShip ship, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
+	public ControlRoom(final PlayerShip ship, TextureAtlas atlas, AssetManager assetManager, float width, float height) {
 		super(ship, "ControlRoom", atlas, assetManager, width, height, .5f);
+
+		warningColor = new Color(0xff2010ff);
 
 		resources = 85;
 		resourcesLabel = aboveButtons.add(resources + "r", "number").padRight(10f).right().expandX().getActor();
+		aboveButtons.row();
+		resourcesChangeLabel = aboveButtons.add("", "number").space(1f).colspan(100).padRight(25f).right().getActor();
+		resourcesChangeLabel.setColor(Color.SCARLET);
+		resourcesChangeLabel.getColor().a = 0f;
 		aboveButtons.row();
 
 		Button laser = addActionButton("laser", new ChangeListener() {
@@ -75,6 +84,18 @@ public class ControlRoom extends RepairableRoom {
 			public void changed(ChangeEvent event, Actor actor) {
 				if (currentStar == null) return;
 
+				if (currentStar.getEnemyShip() != null) {
+					final Cell<Label> leaveLabel = ship.print("Impossible for now.", false);
+					addAction(sequence(delay(5f, run(new Runnable() {
+						@Override
+						public void run() {
+							leaveLabel.clearActor();
+							belowButtons.getCells().removeValue(leaveLabel, false);
+						}
+					}))));
+					return;
+				}
+
 				int taken = currentStar.takeResources();
 				if (taken == 0) return;
 
@@ -86,6 +107,14 @@ public class ControlRoom extends RepairableRoom {
 		});
 
 		validate();
+
+		belowButtons.setBackground(new NinePatchDrawable(atlas.createPatch("textBox")));
+		belowButtons.top().left().pad(10f, 7f, 10f, 7f);
+		belowButtons.defaults().left().space(5f);
+		belowButtons.setSize(width - 9f, 90f);
+		belowButtons.setPosition(5f, 5f);
+
+		buttonsTable.setY(belowButtons.getY() + belowButtons.getHeight() + belowButtons.getPadTop());
 
 		loading = new Animation(.05f, atlas.findRegions("buttons/loading"));
 
@@ -100,14 +129,6 @@ public class ControlRoom extends RepairableRoom {
 		rocketsLoading.setTouchable(Touchable.disabled);
 		rocketsLoading.setPosition(buttonsTable.getX() + rockets.getX(), buttonsTable.getY() + rockets.getY());
 		addActorAfter(buttonsTable, rocketsLoading);
-
-		belowButtons.setBackground(new NinePatchDrawable(atlas.createPatch("glassPanel")));
-		belowButtons.top().left().pad(10f, 7f, 10f, 7f);
-		belowButtons.defaults().left().space(5f);
-		belowButtons.setSize(width - 9f, 71f);
-		belowButtons.setPosition(5f, 5f);
-
-		buttonsTable.setY(belowButtons.getY() + belowButtons.getHeight() + belowButtons.getPadTop());
 	}
 
 
@@ -154,21 +175,26 @@ public class ControlRoom extends RepairableRoom {
 		if (resources <= amount) {
 			amount = resources;
 			resources = 0;
-			resourcesLabel.setColor(Color.SCARLET);
+			resourcesLabel.setColor(warningColor);
 		} else {
 			resources -= amount;
 			resourcesLabel.setColor(Color.WHITE);
 		}
 
 		resourcesLabel.setText(resources + "r");
-		final Label conso = aboveButtons.add("-" + amount, "number").colspan(100).padRight(25f).right().getActor();
-		conso.setColor(Color.SCARLET);
-		resourcesLabel.addAction(sequence(
+		resourcesChangeLabel.setColor(Color.SCARLET);
+		resourcesChangeLabel.getColor().a = 0f;
+		resourcesChangeLabel.setText("-" + amount);
+		resourcesChangeLabel.clearActions();
+		resourcesChangeLabel.addAction(sequence(
+				parallel(fadeIn(.1f), Actions.moveBy(0, 3f, .1f)),
+				Actions.moveBy(0, -3f, .1f),
 				delay(1f),
 				run(new Runnable() {
 					@Override
 					public void run() {
-						conso.remove();
+						resourcesChangeLabel.setText("");
+						resourcesChangeLabel.getColor().a = 0f;
 					}
 				})
 		));
@@ -181,14 +207,19 @@ public class ControlRoom extends RepairableRoom {
 		resourcesLabel.setColor(Color.WHITE);
 
 		resourcesLabel.setText(resources + "r");
-		final Label conso = aboveButtons.add("+" + amount, "number").colspan(100).padRight(25f).right().getActor();
-		conso.setColor(Color.SCARLET);
-		resourcesLabel.addAction(sequence(
+		resourcesChangeLabel.setColor(Color.CHARTREUSE);
+		resourcesChangeLabel.getColor().a = 0f;
+		resourcesChangeLabel.setText("+" + amount);
+		resourcesChangeLabel.clearActions();
+		resourcesChangeLabel.addAction(sequence(
+				parallel(fadeIn(.1f), Actions.moveBy(0, 3f, .1f)),
+				Actions.moveBy(0, -3f, .1f),
 				delay(1f),
 				run(new Runnable() {
 					@Override
 					public void run() {
-						conso.remove();
+						resourcesChangeLabel.setText("");
+						resourcesChangeLabel.getColor().a = 0f;
 					}
 				})
 		));
@@ -214,10 +245,8 @@ public class ControlRoom extends RepairableRoom {
 		enable("laser");
 		enable("rockets");
 
-		belowButtons.clearChildren();
-		Cell<Label> add = belowButtons.add("An enemy's ship is attacking us !");
-		add.getActor().setColor(Color.SCARLET);
-		add.row();
+//		belowButtons.clearChildren();
+		print("An enemy's ship is attacking us !", true);
 	}
 
 	public void endFight() {
@@ -230,5 +259,13 @@ public class ControlRoom extends RepairableRoom {
 		disable("rockets");
 
 		belowButtons.clearChildren();
+	}
+
+	public Cell<Label> print(String s, boolean warning) {
+		Cell<Label> add = belowButtons.add(s);
+		if (warning)
+			add.getActor().setColor(warningColor);
+		add.row();
+		return add;
 	}
 }

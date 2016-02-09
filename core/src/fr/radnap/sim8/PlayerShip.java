@@ -3,6 +3,8 @@ package fr.radnap.sim8;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import fr.radnap.sim8.rooms.*;
 import fr.radnap.sim8.screens.GameScreen;
 
@@ -69,6 +71,10 @@ public class PlayerShip implements Ship {
 	@Override
 	public int getLaserDamages() {
 		return 2;
+	}
+
+	public Cell<Label> print(String s, boolean warning) {
+		return controlRoom.print(s, warning);
 	}
 
 	public void takeDamages(int damages) {

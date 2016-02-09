@@ -92,7 +92,7 @@ public class GameScreen extends AbstractScreen {
 			skin.add("number", labelStyle);
 
 			labelStyle = new Label.LabelStyle();
-			fontParams.size = 150;
+			fontParams.size = 148;
 			labelStyle.font = SIM8.numberGen.generateFont(fontParams);
 			labelStyle.fontColor = new Color(1f, 1f, 1f, 1f);
 			skin.add("title", labelStyle);
@@ -123,7 +123,7 @@ public class GameScreen extends AbstractScreen {
 		overlay.setTouchable(Touchable.enabled);
 		overlay.addAction(Actions.fadeIn(.3f));
 
-		Label label = new Label("You Fail", skin, "title");
+		Label label = new Label("You Failed", skin, "title");
 		label.setPosition((SCREEN_WIDTH - label.getWidth()) / 2f, (SCREEN_HEIGHT + label.getHeight()) / 2f);
 		stage.addActor(label);
 

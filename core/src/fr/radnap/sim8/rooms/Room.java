@@ -80,8 +80,8 @@ public abstract class Room extends Table {
 
 		belowButtons = new Table(GameScreen.skin);
 		belowButtons.top().left();
-		belowButtons.setSize(width - 9f, height - 9f);
-		belowButtons.setPosition(5f, height - 5f - belowButtons.getHeight());
+		belowButtons.setSize(width - 10f, height - 10f);
+		belowButtons.setPosition(5f, 5f);
 		addActor(belowButtons);
 
 		disabledOverlay = new Image(atlas.findRegion("disabledRoom"));
@@ -91,15 +91,15 @@ public abstract class Room extends Table {
 
 		aboveButtons = new Table(GameScreen.skin);
 		aboveButtons.top().left();
-		aboveButtons.setSize(width - 9f, (height - 116f) * .5f);
+		aboveButtons.setSize(width - 10f, (height - 116f) * .5f);
 		aboveButtons.setPosition(5f, height - 5f - aboveButtons.getHeight());
 		addActor(aboveButtons);
 
 		NinePatch roomFrame1 = atlas.createPatch("roomFrame");
 		Image roomFrame = new Image(roomFrame1);
 		roomFrame.setTouchable(Touchable.disabled);
-		roomFrame.setSize(width, height);
-		roomFrame.setPosition(0f, 0f);
+		roomFrame.setSize(width + 2f, height + 2f);
+		roomFrame.setPosition(-1f, -1f);
 		addActor(roomFrame);
 
 		validate();
@@ -111,7 +111,7 @@ public abstract class Room extends Table {
 	public void initialize() {
 		Label actor = new Label(getName(), GameScreen.skin);
 		actor.setPosition(getX() + 10f, getY() + getHeight());
-		getStage().addActor(actor);
+		getParent().addActorAfter(this, actor);
 	}
 
 	@Override
