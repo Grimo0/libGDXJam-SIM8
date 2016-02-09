@@ -35,7 +35,7 @@ public abstract class RepairableRoom extends Room {
 		statusBarDrawable = new NinePatchDrawable(atlas.createPatch("statusBar"));
 		statusBarLowDrawable = new NinePatchDrawable(atlas.createPatch("statusBarLow"));
 		statusBar = new Image(statusBarDrawable);
-		aboveButtons.add(statusBar).width(getWidth() - 9f).height(9f).colspan(100).row();
+		aboveButtons.add(statusBar).left().width(getWidth() - 9f).height(9f).colspan(100).row();
 
 		Button.ButtonStyle style = new Button.ButtonStyle();
 		style.up = new TextureRegionDrawable(atlas.findRegion("buttons/repairButtonUp"));

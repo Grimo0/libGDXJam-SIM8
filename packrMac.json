@@ -5,7 +5,7 @@
     "classpath": [
         "LD34/desktop/build/libs/desktop-1.0.jar"
     ],
-    "mainclass": "fr.langladure.ld34.desktop.DesktopLauncher",
+    "mainclass": "fr.radnap.ld34.desktop.DesktopLauncher",
     "vmargs": [
        "-Xmx1G"
     ],

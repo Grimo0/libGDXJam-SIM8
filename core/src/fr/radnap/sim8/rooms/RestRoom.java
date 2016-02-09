@@ -25,6 +25,7 @@ public class RestRoom extends Room {
 	private Animation currentAnimation;
 	private TextureRegionDrawable ekgDrawable;
 	private Image ekg;
+	private float ekgTime;
 
 	private Animation loading;
 	private float healLoadingTime;
@@ -59,6 +60,7 @@ public class RestRoom extends Room {
 		dangerAnimation = new Animation(.1f, atlas.findRegions("restRoom/ekgDanger"), Animation.PlayMode.LOOP);
 
 		ekgDrawable = new TextureRegionDrawable(okAnimation.getKeyFrame(0f));
+		ekgTime = 0f;
 		ekg = new Image(ekgDrawable);
 		belowButtons.top().left();
 		belowButtons.add(ekg).width(4f*ekg.getPrefWidth()).height(4f*ekg.getPrefHeight()).pad(5f).left();
@@ -76,7 +78,10 @@ public class RestRoom extends Room {
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		ekgDrawable.setRegion(currentAnimation.getKeyFrame(stateTime));
+		ekgTime += delta;
+		ekgDrawable.setRegion(currentAnimation.getKeyFrame(ekgTime));
+		if (currentAnimation.isAnimationFinished(ekgTime))
+			ekgTime -= currentAnimation.getAnimationDuration();
 		if (healLoadingTime > 0) {
 			healLoadingTime -= delta;
 			if (healLoadingTime < 0) {
@@ -96,10 +101,14 @@ public class RestRoom extends Room {
 		else if(stressLevel > 8) currentAnimation = dangerAnimation;
 		else if (stressLevel > 4) currentAnimation = cautionAnimation;
 
+		float oldDuration = currentAnimation.getAnimationDuration();
 		okAnimation.setFrameDuration(okAnimation.getFrameDuration() - .007f);
 		cautionAnimation.setFrameDuration(cautionAnimation.getFrameDuration() - .007f);
 		dangerAnimation.setFrameDuration(dangerAnimation.getFrameDuration() - .007f);
+		ekgTime *= currentAnimation.getAnimationDuration() / oldDuration;
 
+		ekg.getColor().g -= .083f;
+		ekg.getColor().b -= .083f;
 		enable("heal");
 	}
 
@@ -110,12 +119,16 @@ public class RestRoom extends Room {
 		if (stressLevel <= 4) currentAnimation = okAnimation;
 		else if (stressLevel <= 8) currentAnimation = cautionAnimation;
 
+		float oldDuration = currentAnimation.getAnimationDuration();
 		okAnimation.setFrameDuration(okAnimation.getFrameDuration() + .007f);
 		cautionAnimation.setFrameDuration(cautionAnimation.getFrameDuration() + .007f);
 		dangerAnimation.setFrameDuration(dangerAnimation.getFrameDuration() + .007f);
+		ekgTime *= currentAnimation.getAnimationDuration() / oldDuration;
 
+		ekg.getColor().g += .083f;
+		ekg.getColor().b += .083f;
 		disable("heal");
-		healLoadingTime = 2f;
+		healLoadingTime = 1.5f;
 		if (stressLevel == 1) return;
 
 		healLoading.setDrawable(healLoadingDrawable);

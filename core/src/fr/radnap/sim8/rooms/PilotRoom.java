@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import fr.radnap.sim8.EnemyShip;
@@ -95,9 +96,18 @@ public class PilotRoom extends Room {
 		reachable.setPosition(currentStar.getX() + (currentStar.getWidth() - reachable.getWidth()) / 2f,
 				currentStar.getY() + (currentStar.getHeight() - reachable.getHeight()) / 2f);
 		map.addActor(current);
+	}
 
-		// TUTORIAL
+
+	@Override
+	public void initialize() {
+		super.initialize();
+		ship.print("You need to reach the destination", false);
+		ship.print("with the crew alive.", false);
 		if (Options.tutorial) {
+			rooms.get("ControlRoom").disableRoom();
+			rooms.get("Hull").disableRoom();
+			rooms.get("RestRoom").disableRoom();
 			canMove = false;
 			map.addAction(sequence(
 					delay(.5f),
@@ -115,19 +125,6 @@ public class PilotRoom extends Room {
 						}
 					})
 			));
-		}
-		belowButtons.add("You need to reach the destination").row();
-		belowButtons.add("with the crew alive.").row();
-	}
-
-
-	@Override
-	public void initialize() {
-		super.initialize();
-		if (Options.tutorial) {
-			rooms.get("ControlRoom").disableRoom();
-			rooms.get("Hull").disableRoom();
-			rooms.get("RestRoom").disableRoom();
 		}
 		arriveTo(currentStar);
 	}
@@ -214,12 +211,12 @@ public class PilotRoom extends Room {
 		if (!canMove || star == currentStar) return;
 
 		if (currentStar.getEnemyShip() != null) {
-			belowButtons.clearChildren();
-			final Label leaveLabel = belowButtons.add("We can't leave while we're attacked.").getActor();
+			final Cell<Label> leaveLabel = ship.print("We can't leave while we're attacked.", false);
 			addAction(sequence(delay(5f, run(new Runnable() {
 				@Override
 				public void run() {
-					leaveLabel.remove();
+					leaveLabel.clearActor();
+					belowButtons.getCells().removeValue(leaveLabel, false);
 				}
 			}))));
 			return;
@@ -228,12 +225,12 @@ public class PilotRoom extends Room {
 		ControlRoom controlRoom = (ControlRoom) rooms.get("ControlRoom");
 		double distance = Math.sqrt(distanceSq(star));
 		if (!controlRoom.canUse(controlRoom.costFor(distance))) {
-			belowButtons.clearChildren();
-			final Label leaveLabel = belowButtons.add("We don't have enough resources.").getActor();
+			final Cell<Label> leaveLabel = ship.print("We don't have enough resources.", false);
 			addAction(sequence(delay(5f, run(new Runnable() {
 				@Override
 				public void run() {
-					leaveLabel.remove();
+					leaveLabel.clearActor();
+					belowButtons.getCells().removeValue(leaveLabel, false);
 				}
 			}))));
 			return;

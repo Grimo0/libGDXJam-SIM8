@@ -20,7 +20,7 @@ import fr.radnap.sim8.screens.*;
 public class SIM8 extends Game {
 
 	public static final String NAME = "SIM8";
-	public static final String VERSION = "0.6.3";
+	public static final String VERSION = "0.6.4";
 	public static boolean RELEASE = false;
 	public static boolean DEVMODE = false;
 
@@ -85,7 +85,7 @@ public class SIM8 extends Game {
 		loadingScreen = new LoadingScreen(this);
 		gameScreen = new GameScreen(this);
 
-		loadingScreen.setNextScreen(mainMenuScreen);
+		loadingScreen.setNextScreen(gameScreen);
 		setScreen(loadingScreen);
 	}
 
