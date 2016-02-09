@@ -21,7 +21,11 @@ public class SIM8 extends Game {
 
 	public static final String NAME = "SIM8";
 	public static final String VERSION = "0.6.4";
+<<<<<<< HEAD
 	public static boolean RELEASE = true;
+=======
+	public static boolean RELEASE = false;
+>>>>>>> origin/master
 	public static boolean DEVMODE = false;
 
 	public static Logger logger;
@@ -85,7 +89,7 @@ public class SIM8 extends Game {
 		loadingScreen = new LoadingScreen(this);
 		gameScreen = new GameScreen(this);
 
-		loadingScreen.setNextScreen(mainMenuScreen);
+		loadingScreen.setNextScreen(gameScreen);
 		setScreen(loadingScreen);
 	}
 
