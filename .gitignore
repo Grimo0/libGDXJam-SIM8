@@ -27,6 +27,7 @@ android/libs/armeabi/
 android/libs/armeabi-v7a/
 android/libs/x86/
 android/gen/
+android/build/
 .idea/
 *.ipr
 *.iws
@@ -52,7 +53,7 @@ local.properties
 
 ## NetBeans
 **/nbproject/private/
-build/
+##build/
 nbbuild/
 dist/
 nbdist/
@@ -63,10 +64,15 @@ nb-configuration.xml
 
 .gradle
 gradle-app.setting
-build/
 
 ## OS Specific
 .DS_Store
+
+core/build
+build/intermediates
+build/win32
+build/linux32
+build/mac
 
 *.log
 *.png~
