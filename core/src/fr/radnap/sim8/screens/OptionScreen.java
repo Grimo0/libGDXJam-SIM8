@@ -182,47 +182,6 @@ public class OptionScreen extends AbstractScreen {
 		optionsCell = table.add(optionsTable);
 		optionsCell.row();
 		table.layout();
-
-		/*// Cursor
-		selected = 0;
-		final Image cursor = new Image(game.assetManager.get("./cursor.png", Texture.class));
-		stage.addActor(cursor);
-		cursor.setSize(cursor.getWidth() * ratio, cursor.getHeight() * ratio);
-		cursor.setX(table.getX() - cursor.getWidth() - 2 * ratio);
-		Actor item = optionsTable.getChildren().items[selected];
-		item.setColor(Color.BLACK);
-		cursor.setY(table.getY() + optionsTable.getY() + item.getY() + (item.getHeight() - cursor.getHeight()) / 2);
-		stage.setKeyboardFocus(item);
-
-		stage.addListener(new InputListener() {
-			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				Table cellTable = (Table) optionsCell.getActor();
-				if (keycode == Input.Keys.DOWN && selected < cellTable.getChildren().size - 1) {
-					cellTable.getChildren().items[selected].setColor(Color.WHITE);
-
-					selected++;
-					Actor item = cellTable.getChildren().items[selected];
-					item.setColor(Color.BLACK);
-					cursor.setY(table.getY() + cellTable.getY() + item.getY() + (item.getHeight() - cursor.getHeight()) / 2);
-					stage.setKeyboardFocus(item);
-
-					return true;
-				} else if (keycode == Input.Keys.UP && selected > 0) {
-					cellTable.getChildren().items[selected].setColor(Color.WHITE);
-
-					selected--;
-					Actor item = cellTable.getChildren().items[selected];
-					item.setColor(Color.BLACK);
-					cursor.setY(table.getY() + cellTable.getY() + item.getY() + (item.getHeight() - cursor.getHeight()) / 2);
-					stage.setKeyboardFocus(item);
-
-					return true;
-				}
-
-				return super.keyDown(event, keycode);
-			}
-		});*/
 	}
 
 	@Override

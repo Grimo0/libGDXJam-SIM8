@@ -28,6 +28,7 @@ public class MainMenuScreen extends AbstractScreen {
 	private Image cursor;
 	private Sprite screenBg;
 	private float ratio;
+	private IntroductionScreen introductionScreen;
 
 	private class MenuItemListener extends InputListener {
 		@Override
@@ -72,6 +73,8 @@ public class MainMenuScreen extends AbstractScreen {
 		super.create();
 
 		stage = new Stage(viewport, game.batch);
+
+		introductionScreen = new IntroductionScreen(game);
 
 		TextureAtlas atlas = game.assetManager.get("mainMenu/mainMenuPack.atlas", TextureAtlas.class);
 
@@ -153,9 +156,7 @@ public class MainMenuScreen extends AbstractScreen {
 		newGame.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				game.loadingScreen.setFadeWhenLoaded(false);
-				game.loadingScreen.setNextScreen(game.gameScreen);
-				game.setScreen(game.loadingScreen);
+				game.setScreen(introductionScreen);
 			}
 		});
 		newGame.addListener(new MenuItemListener());
@@ -183,47 +184,6 @@ public class MainMenuScreen extends AbstractScreen {
 		table.add(exit).row();
 
 		table.validate();
-
-		/*// Cursor
-		selected = 0;
-		cursor = new Image(game.assetManager.get("./cursor.png", Texture.class));
-		stage.addActor(cursor);
-		cursor.setSize(cursor.getWidth() * ratio, cursor.getHeight() * ratio);
-		cursor.setX(table.getX() - cursor.getWidth() - 2 * ratio);
-		Actor item = table.getChildren().items[selected];
-		InputEvent buttonEvent = new InputEvent();
-		buttonEvent.setPointer(-1);
-		buttonEvent.setType(InputEvent.Type.enter);
-		item.fire(buttonEvent);
-//		cursor.setY(table.getY() + item.getY() + (item.getHeight() - cursor.getHeight()) / 2);
-//		stage.setKeyboardFocus(item);
-
-		stage.addListener(new InputListener() {
-			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				if (keycode == Input.Keys.DOWN) {
-					if (selected < table.getChildren().size - 1) {
-						InputEvent buttonEvent = new InputEvent();
-						buttonEvent.setPointer(-1);
-						buttonEvent.setType(InputEvent.Type.enter);
-						table.getChildren().items[selected + 1].fire(buttonEvent);
-					}
-					return true;
-				} else if (keycode == Input.Keys.UP) {
-					if (selected > 0) {
-						InputEvent buttonEvent = new InputEvent();
-						buttonEvent.setPointer(-1);
-						buttonEvent.setType(InputEvent.Type.enter);
-						table.getChildren().items[selected - 1].fire(buttonEvent);
-					}
-					return true;
-				} else if (keycode == Input.Keys.ENTER) {
-					table.getChildren().items[selected].fire(new ChangeListener.ChangeEvent());
-				}
-
-				return super.keyDown(event, keycode);
-			}
-		});*/
 	}
 
 	@Override
