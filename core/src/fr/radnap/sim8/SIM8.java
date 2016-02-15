@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import fr.radnap.sim8.screens.*;
 
 public class SIM8 extends Game {
@@ -91,15 +90,20 @@ public class SIM8 extends Game {
 
 	@Override
 	public void render() {
-		super.render();
-		if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && (Gdx.input.isKeyPressed(Input.Keys.Q) || Gdx.input.isKeyPressed(Input.Keys.W)))
-			Gdx.app.exit();
-		else if (!RELEASE && Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-			DEVMODE = !DEVMODE;
-		} else if (DEVMODE && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && screen != mainMenuScreen) {
-			loadingScreen.setFadeWhenLoaded(true);
-			loadingScreen.setNextScreen(mainMenuScreen);
-			setScreen(loadingScreen);
+		try {
+			super.render();
+			if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && (Gdx.input.isKeyPressed(Input.Keys.Q) || Gdx.input.isKeyPressed(Input.Keys.W)))
+				Gdx.app.exit();
+			else if (!RELEASE && Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+				DEVMODE = !DEVMODE;
+			} else if (DEVMODE && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && screen != mainMenuScreen) {
+				loadingScreen.setFadeWhenLoaded(true);
+				loadingScreen.setNextScreen(mainMenuScreen);
+				setScreen(loadingScreen);
+			}
+		} catch (NullPointerException e) {
+			debug(e.toString());
+			throw e;
 		}
 	}
 
@@ -129,9 +133,5 @@ public class SIM8 extends Game {
 
 	public static void debug(String message) {
 		logger.debug(message);
-	}
-
-	public static double distance(float x1, float y1, float x2, float y2) {
-		return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 	}
 }

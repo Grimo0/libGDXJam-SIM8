@@ -5,13 +5,16 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import fr.radnap.sim8.*;
+import fr.radnap.sim8.EnemyShip;
+import fr.radnap.sim8.Options;
+import fr.radnap.sim8.PlayerShip;
+import fr.radnap.sim8.Rocket;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 
 /**
  * @author Radnap
@@ -195,6 +198,8 @@ public class Hull extends RepairableRoom {
 	}
 
 	private void fireLaser(final Image laser) {
+		if (enemy == null) return;
+
 		if (Options.sound)
 			laserSound.play(.015f);
 
@@ -205,11 +210,11 @@ public class Hull extends RepairableRoom {
 		laser.setVisible(true);
 		float x = (float) (enemy.getX() + enemy.getWidth() * .25f + Math.random() * enemy.getWidth() * .25f);
 		float y = (float) (enemy.getY() + enemy.getHeight() * .35f + Math.random() * enemy.getHeight() * .3f);
-		double distance = SIM8.distance(attackOriginX, attackOriginY, x, y);
+		double distance = Vector2.dst2(attackOriginX, attackOriginY, x, y);
 		if (y > attackOriginY)
-			laser.setRotation(90f - (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+			laser.setRotation(90f - (float) (Math.acos(Vector2.dst2(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
 		else
-			laser.setRotation(90f + (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+			laser.setRotation(90f + (float) (Math.acos(Vector2.dst2(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
 		laser.addAction(sequence(
 				moveTo(x, y, (float) (distance / 500f)),
 				Actions.run(new Runnable() {
@@ -238,6 +243,8 @@ public class Hull extends RepairableRoom {
 	}
 
 	private void fireRocket(final Rocket rocket) {
+		if (enemy == null) return;
+
 		float attackOriginX = shipHull.getX() + 44;
 		float attackOriginY = shipHull.getY() + 245;
 
@@ -245,11 +252,11 @@ public class Hull extends RepairableRoom {
 		rocket.launch();
 		float x = (float) (enemy.getX() + enemy.getWidth() * .25f + Math.random() * enemy.getWidth() * .3f);
 		float y = (float) (enemy.getY() + enemy.getHeight() * .35f + Math.random() * enemy.getHeight() * .3f);
-		double distance = SIM8.distance(attackOriginX, attackOriginY, x, y);
+		double distance = Vector2.dst2(attackOriginX, attackOriginY, x, y);
 		if (y > attackOriginY)
-			rocket.setRotation(- (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+			rocket.setRotation(-(float) (Math.acos(Vector2.dst2(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
 		else
-			rocket.setRotation(-(float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+			rocket.setRotation(-(float) (Math.acos(Vector2.dst2(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
 		rocket.addAction(sequence(
 				moveTo(x, y, (float) (distance / 300f)),
 				Actions.run(new Runnable() {

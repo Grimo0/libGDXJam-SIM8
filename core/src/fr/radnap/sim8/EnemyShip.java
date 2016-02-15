@@ -3,6 +3,7 @@ package fr.radnap.sim8;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -74,8 +75,8 @@ public class EnemyShip extends Group implements Ship {
 		if (!ship.hasActions()) {
 			ship.addAction(Actions.moveBy(0, -ship.getY() * 2f, 1f));
 			ship.addAction(sequence(
-					Actions.moveBy((- ship.getX()) * 2f, 0, .5f),
-					Actions.moveBy((+ ship.getX()) * 2f, 0, .5f)));
+					Actions.moveBy((-ship.getX()) * 2f, 0, .5f),
+					Actions.moveBy((+ship.getX()) * 2f, 0, .5f)));
 		}
 	}
 
@@ -123,11 +124,11 @@ public class EnemyShip extends Group implements Ship {
 		final Actor enemy = getParent().findActor("PlayerShipHull");
 		float x = (float) (enemy.getX() + enemy.getWidth() * .75f + Math.random() * enemy.getWidth() * .25f - getX());
 		float y = (float) (ship.getY() + ship.getHeight() * .3f + Math.random() * ship.getHeight() * .4f);
-		double distance = SIM8.distance(attackOriginX, attackOriginY, x, y);
+		double distance = Vector2.dst2(attackOriginX, attackOriginY, x, y);
 		if (y > attackOriginY)
-			laser.setRotation(90f + (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+			laser.setRotation(90f + (float) (Math.acos(Vector2.dst2(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
 		else
-			laser.setRotation(90f - (float) (Math.acos(SIM8.distance(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
+			laser.setRotation(90f - (float) (Math.acos(Vector2.dst2(x, attackOriginY, x, y) / distance) * 180 / Math.PI));
 		laser.addAction(sequence(
 				moveTo(x, y, (float) (distance / 500f)),
 				Actions.run(new Runnable() {

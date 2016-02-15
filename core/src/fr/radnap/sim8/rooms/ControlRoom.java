@@ -20,7 +20,6 @@ import fr.radnap.sim8.PlayerShip;
 import fr.radnap.sim8.Star;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
 /**
  * @author Radnap
@@ -245,7 +244,6 @@ public class ControlRoom extends RepairableRoom {
 		enable("laser");
 		enable("rockets");
 
-//		belowButtons.clearChildren();
 		print("An enemy's ship is attacking us !", true);
 	}
 
